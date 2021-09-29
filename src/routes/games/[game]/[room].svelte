@@ -1,9 +1,10 @@
 <script context="module">
 	import Header from '$lib/header/Header.svelte';
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
+	export const prerender = true;
 	export async function load({ page }) {
 		try {
-			const Game = await import(`../../../games/${page.params.game}/main.svelte`);
+			const Game = await import(`../../../lib/games/${page.params.game}/main.svelte`);
 
 			return {
 				props: {
