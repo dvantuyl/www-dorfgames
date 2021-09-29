@@ -2,9 +2,14 @@ import GUN from 'gun';
 import 'gun/sea.js';
 import 'gun/axe.js';
 import { writable } from 'svelte/store';
+import { variables } from '$lib/variables';
 
 // Database
-export const db = GUN();
+let servers = ['http://localhost:8765/gun'];
+if (variables.gunServer) {
+	servers = [...servers, `${variables.gunServer}`];
+}
+export const db = GUN(servers);
 
 // Gun User
 export const user = db.user().recall({ sessionStorage: true });
