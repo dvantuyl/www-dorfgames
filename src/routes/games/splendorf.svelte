@@ -5,7 +5,7 @@
 	import Header from '$lib/header/Header.svelte';
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
 	import Game from '$lib/games/splendorf/main.svelte';
-	let room = 'dev01';
+	let room = 'dev08';
 
 	let title;
 	let state = { i: 0 };
@@ -40,12 +40,12 @@
 					}
 				}
 			});
-
-		if ($username) {
-			sessionUserId = $username;
-			db.get(game).get(room).get('players').set(user);
-		}
 	});
+
+	$: if ($username) {
+		sessionUserId = $username;
+		db.get(game).get(room).get('players').set(user);
+	}
 
 	$: if (state && Object.values(state).length) {
 		db.get(game).get(room).get('state').put(JSON.stringify(state));
