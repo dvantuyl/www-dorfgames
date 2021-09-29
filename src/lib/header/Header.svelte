@@ -1,5 +1,6 @@
 <script>
 	import { username, user } from '$lib/session/user';
+	import { variables } from '$lib/variables';
 
 	function signout() {
 		user.leave();
@@ -17,6 +18,7 @@
 		<button class="signout-button" on:click={signout}>Sign Out</button>
 	{:else}
 		<span><strong>Sign In</strong></span>
+		<span>{variables.gunServer}</span>
 	{/if}
 	<slot />
 </header>
