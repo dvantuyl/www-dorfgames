@@ -7,7 +7,7 @@
 	<header class="h-16 px-5 flex-none">
 		<Header />
 	</header>
-	<main class="flex-grow h-full">
+	<main class="flex-grow">
 		<slot />
 	</main>
 </div>
