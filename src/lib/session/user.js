@@ -5,11 +5,11 @@ import { writable } from 'svelte/store';
 import { variables } from '$lib/variables';
 
 // Database
-let servers = ['http://localhost:8765/gun'];
+let peers = ['http://localhost:8765/gun'];
 if (variables.gunServer) {
-	servers = [...servers, `${variables.gunServer}`];
+	peers = [...peers, `${variables.gunServer}`];
 }
-export const db = GUN(servers);
+export const db = GUN({ peers, radisk: false });
 
 // Gun User
 export const user = db.user().recall({ sessionStorage: true });
