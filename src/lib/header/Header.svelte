@@ -16,7 +16,7 @@
 
 		<button class="signout-button" on:click={signout}>Sign Out</button>
 	{:else}
-		<h1 />
+		<span><strong>Sign In</strong></span>
 	{/if}
 	<slot />
 </header>
