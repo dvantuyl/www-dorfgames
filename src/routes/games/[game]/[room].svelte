@@ -22,7 +22,7 @@
 </script>
 
 <script>
-	import array from 'lodash/array';
+	import array from 'lodash/array.js';
 	import { username, db, user } from '$lib/session/user';
 	import { onMount } from 'svelte';
 	export let Game;
