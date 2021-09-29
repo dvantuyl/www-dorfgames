@@ -1,14 +1,20 @@
 <script context="module">
 	import Header from '$lib/header/Header.svelte';
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
+	import Splendorf from '$lib/games/splendorf/main.svelte';
 	export const prerender = true;
 	export async function load({ page }) {
 		try {
-			const Game = await import(`../../../lib/games/${page.params.game}/main.svelte`);
+			let Game;
+
+			switch (page.params.game) {
+				case 'splendorf':
+					Game = Splendorf;
+			}
 
 			return {
 				props: {
-					Game: Game.default,
+					Game,
 					game: page.params.game,
 					room: page.params.room
 				}
@@ -29,8 +35,8 @@
 	export let Game;
 	export let game;
 	export let room;
-	export let sessionUserId;
 
+	let sessionUserId;
 	let title;
 	let state = { i: 0 };
 	let users = [];
@@ -62,12 +68,12 @@
 					}
 				}
 			});
-
-		if ($username) {
-			sessionUserId = $username;
-			db.get(game).get(room).get('players').set(user);
-		}
 	});
+
+	$: if ($username) {
+		sessionUserId = $username;
+		db.get(game).get(room).get('players').set(user);
+	}
 
 	$: if (state && Object.values(state).length) {
 		db.get(game).get(room).get('state').put(JSON.stringify(state));
