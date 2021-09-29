@@ -1,30 +1,14 @@
 <script context="module">
 	import Header from '$lib/header/Header.svelte';
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
-	import Splendorf from '$lib/games/splendorf/main.svelte';
 	export const prerender = true;
 	export async function load({ page }) {
-		try {
-			let Game;
-
-			switch (page.params.game) {
-				case 'splendorf':
-					Game = Splendorf;
+		return {
+			props: {
+				game: page.params.game,
+				room: page.params.room
 			}
-
-			return {
-				props: {
-					Game,
-					game: page.params.game,
-					room: page.params.room
-				}
-			};
-		} catch (e) {
-			return {
-				status: 404,
-				error: `Game '${page.params.game}' not found`
-			};
-		}
+		};
 	}
 </script>
 
@@ -32,7 +16,7 @@
 	import array from 'lodash/array.js';
 	import { username, db, user } from '$lib/session/user';
 	import { onMount } from 'svelte';
-	export let Game;
+	import Splendorf from '$lib/games/splendorf/main.svelte';
 	export let game;
 	export let room;
 
@@ -40,6 +24,12 @@
 	let title;
 	let state = { i: 0 };
 	let users = [];
+	let Game;
+
+	switch (game) {
+		case 'splendorf':
+			Game = Splendorf;
+	}
 
 	onMount(() => {
 		db.get(game)
