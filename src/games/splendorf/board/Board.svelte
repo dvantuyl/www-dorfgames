@@ -4,6 +4,7 @@
 	import ActionSection from './sections/ActionSection.svelte';
 	import { players as playersStore } from '../game/stores/players';
 	import { tokens as tokensStore } from '../game/stores/tokens';
+
 	export let sessionUserId;
 
 	$: players = $playersStore.list;

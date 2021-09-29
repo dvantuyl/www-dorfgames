@@ -40,9 +40,11 @@ export type SetupStateParams = {
 };
 
 export function setupState(users: string[]): State {
-	const players = setupPlayers(users);
-	const tokens = setupTokens(users.length);
-	return { i: 2, players, tokens };
+	return {
+		i: 2,
+		players: setupPlayers(users),
+		tokens: setupTokens(users.length)
+	};
 }
 
 export function updateState(state: State): void {

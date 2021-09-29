@@ -1,6 +1,7 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
 	import { ColorClass } from './colorclass';
+
 	export let count = 0;
 	export let color;
 

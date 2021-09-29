@@ -42,7 +42,7 @@
 			.on((data) => {
 				if (data && data.alias) {
 					const usersList = array.uniq([...users, data.alias]);
-					if (users.length !== usersList.length) {
+					if (users.length < usersList.length) {
 						users = usersList;
 						console.log('updateusers', users);
 					}
