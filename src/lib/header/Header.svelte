@@ -1,6 +1,5 @@
 <script>
 	import { username, user } from '$lib/session/user';
-	import { variables } from '$lib/variables';
 
 	function signout() {
 		user.leave();
@@ -8,17 +7,26 @@
 	}
 </script>
 
-<header class="flex justify-between items-center h-20 w-full">
-	{#if $username}
-		<div class="flex">
-			<span><strong>{$username}</strong></span>
-			<img src={`https://avatars.dicebear.com/api/initials/${$username}.svg`} alt="avatar" />
+<div class="flex justify-between items-center h-full w-full">
+	<div class="flex items-bottom">
+		<h1 class="text-xl font-bold"><a href="/">Dorfgames.com</a></h1>
+		<div class="divide-x divide-green-500 flex items-center ml-5">
+			<span class="block"><a href="/games">Games</a></span>
 		</div>
+	</div>
 
-		<button class="signout-button" on:click={signout}>Sign Out</button>
+	{#if $username}
+		<div class="flex items-center">
+			<span class="font-bold block mr-2">{$username}</span>
+			<img
+				class="block w-10 mr-5"
+				src={`https://avatars.dicebear.com/api/initials/${$username}.svg`}
+				alt="avatar"
+			/>
+			<button class="signout-button block" on:click={signout}>Sign Out</button>
+		</div>
 	{:else}
-		<span><strong>Sign In</strong></span>
-		<span>{variables.gunServer}</span>
+		<span>Sign In</span>
 	{/if}
 	<slot />
-</header>
+</div>

@@ -3,8 +3,12 @@
 	import '../app.postcss';
 </script>
 
-<Header />
+<div class="w-full min-h-screen flex flex-col">
+	<header class="h-16 px-5 w-full flex-none">
+		<Header />
+	</header>
 
-<main>
-	<slot />
-</main>
+	<main class="px-5 w-full flex-grow">
+		<slot />
+	</main>
+</div>

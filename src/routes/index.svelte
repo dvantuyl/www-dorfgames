@@ -9,7 +9,9 @@
 	<title>Dorfgames</title>
 </svelte:head>
 
-<section />
+<section class="w-full h-full flex justify-center items-center">
+	<h1 class="text-3xl bold text-green-600">Welcome to Dorfgames.com</h1>
+</section>
 
 <style>
 </style>

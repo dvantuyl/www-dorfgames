@@ -1,22 +1,30 @@
 <script context="module">
-	import Header from '$lib/header/Header.svelte';
-	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
-	export const prerender = true;
 	export async function load({ page }) {
-		return {
-			props: {
-				game: page.params.game,
-				room: page.params.room
-			}
-		};
+		try {
+			const Game = await import(`../../../lib/games/${page.params.game}/main.svelte`);
+
+			return {
+				props: {
+					Game: Game.default,
+					game: page.params.game,
+					room: page.params.room
+				}
+			};
+		} catch (e) {
+			return {
+				status: 404,
+				error: `Game '${page.params.game}' not found`
+			};
+		}
 	}
 </script>
 
 <script>
+	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
 	import array from 'lodash/array.js';
 	import { username, db, user } from '$lib/session/user';
 	import { onMount } from 'svelte';
-	import Splendorf from '$lib/games/splendorf/main.svelte';
+	export let Game;
 	export let game;
 	export let room;
 
@@ -24,12 +32,6 @@
 	let title;
 	let state = { i: 0 };
 	let users = [];
-	let Game;
-
-	switch (game) {
-		case 'splendorf':
-			Game = Splendorf;
-	}
 
 	onMount(() => {
 		db.get(game)
@@ -82,8 +84,7 @@
 	{#if state.i > 0}
 		<svelte:component this={Game} {users} {sessionUserId} bind:state bind:title />
 	{:else}
-		<Header />
-		<main>
+		<main class="px-5">
 			<button on:click={startGame}>Start Game</button>
 		</main>
 	{/if}
