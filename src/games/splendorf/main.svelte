@@ -5,7 +5,7 @@
 	export const title = 'Splendorf';
 	export let state;
 	export let users;
-	export let sessionUser;
+	export let sessionUserId;
 
 	$: {
 		if (state.i === 1) {
@@ -16,4 +16,4 @@
 	}
 </script>
 
-<Board />
+<Board {sessionUserId} />

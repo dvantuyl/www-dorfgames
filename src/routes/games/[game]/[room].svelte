@@ -28,7 +28,7 @@
 	export let Game;
 	export let game;
 	export let room;
-	export let sessionUser;
+	export let sessionUserId;
 
 	let title;
 	let state = { i: 0 };
@@ -63,6 +63,7 @@
 			});
 
 		if ($username) {
+			sessionUserId = $username;
 			db.get(game).get(room).get('players').set(user);
 		}
 	});
@@ -82,7 +83,7 @@
 
 <SessionWrapper>
 	{#if state.i > 0}
-		<svelte:component this={Game} {users} {sessionUser} bind:state bind:title />
+		<svelte:component this={Game} {users} {sessionUserId} bind:state bind:title />
 	{:else}
 		<Header />
 		<main>
