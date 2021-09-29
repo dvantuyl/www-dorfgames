@@ -1,4 +1,5 @@
 <script context="module">
+	import Header from '$lib/header/Header.svelte';
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
 	export async function load({ page }) {
 		try {
@@ -27,15 +28,11 @@
 	export let Game;
 	export let game;
 	export let room;
+	export let sessionUser;
 
 	let title;
-	let state;
-	let players = [];
-
-	$: if ($username) {
-		players = array.uniq([...players, $username]);
-		db.get(game).get(room).get('players').set(user);
-	}
+	let state = { i: 0 };
+	let users = [];
 
 	onMount(() => {
 		db.get(game)
@@ -44,7 +41,11 @@
 			.map()
 			.on((data) => {
 				if (data && data.alias) {
-					players = array.uniq([...players, data.alias]);
+					const usersList = array.uniq([...users, data.alias]);
+					if (users.length !== usersList.length) {
+						users = usersList;
+						console.log('updateusers', users);
+					}
 				}
 			});
 
@@ -53,13 +54,25 @@
 			.get('state')
 			.on((data) => {
 				if (data) {
-					state = data;
+					const stateUpdate = JSON.parse(data);
+					if (stateUpdate.i !== state.i) {
+						state = stateUpdate;
+						console.log('updatestate', state);
+					}
 				}
 			});
+
+		if ($username) {
+			db.get(game).get(room).get('players').set(user);
+		}
 	});
 
+	$: if (state && Object.values(state).length) {
+		db.get(game).get(room).get('state').put(JSON.stringify(state));
+	}
+
 	function startGame() {
-		db.get(game).get(room).get('state').put('started');
+		state = { i: 1 };
 	}
 </script>
 
@@ -68,9 +81,12 @@
 </svelte:head>
 
 <SessionWrapper>
-	{#if state === 'started'}
-		<svelte:component this={Game} {room} {players} bind:title />
+	{#if state.i > 0}
+		<svelte:component this={Game} {users} {sessionUser} bind:state bind:title />
 	{:else}
-		<button on:click={startGame}>Start Game</button>
+		<Header />
+		<main>
+			<button on:click={startGame}>Start Game</button>
+		</main>
 	{/if}
 </SessionWrapper>
