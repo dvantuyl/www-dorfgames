@@ -47,9 +47,31 @@ export function setupState(users: string[]): State {
 	};
 }
 
-export function updateState(state: State): void {
+export function readState(state: State): void {
 	players.set(state.players);
 	tokens.set(state.tokens);
+}
+
+export function nextPlayerIndex(currentPlayerIndex: number, numPlayers: number): number {
+	return currentPlayerIndex === numPlayers - 1 ? 0 : currentPlayerIndex + 1;
+}
+
+export function writeState(
+	playerIndex: number,
+	playerList: Player[],
+	tokens: Tokens,
+	state: State
+): State {
+	const players = {
+		currentPlayerIndex: playerIndex,
+		list: playerList
+	};
+
+	return {
+		i: state.i + 1,
+		players,
+		tokens
+	};
 }
 
 function setupPlayers(users): Players {

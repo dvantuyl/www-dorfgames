@@ -2,18 +2,15 @@
 	import TokenSection from './sections/TokenSection.svelte';
 	import PlayerSection from './sections/PlayerSection.svelte';
 	import ActionSection from './sections/ActionSection.svelte';
-	import { players as playersStore } from '../game/stores/players';
-	import { tokens as tokensStore } from '../game/stores/tokens';
+	import { createEventDispatcher } from 'svelte';
 
-	export let sessionUserId;
+	export let players;
+	export let tokens;
 
-	$: players = $playersStore.list;
-	$: tokens = $tokensStore;
+	const dispatch = createEventDispatcher();
 
-	function takeToken(event) {
-		const color = event.detail.color;
-		tokensStore.decrement(color);
-		playersStore.player(sessionUserId).tokens.increment(color);
+	function forwardTakeToken(event) {
+		dispatch('takeToken', event.detail);
 	}
 </script>
 
@@ -26,11 +23,11 @@
 
 	{#if tokens}
 		<div class="w-1/6 flex-grow">
-			<TokenSection {tokens} on:click={takeToken} />
+			<TokenSection {tokens} on:click={forwardTakeToken} />
 		</div>
 	{/if}
 
 	<div class="flex-none h-20 w-full">
-		<ActionSection />
+		<ActionSection on:action />
 	</div>
 </div>

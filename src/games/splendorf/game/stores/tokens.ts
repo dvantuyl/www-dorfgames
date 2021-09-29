@@ -2,7 +2,14 @@ import { writable } from 'svelte/store';
 import type { Tokens, ColorType } from '../index';
 
 function createTokens() {
-	const { subscribe, set, update } = writable({});
+	const { subscribe, set, update } = writable({
+		bk: 0,
+		wh: 0,
+		re: 0,
+		bl: 0,
+		gr: 0,
+		go: 0
+	});
 
 	function increment(clr: ColorType) {
 		update((tokens: Tokens): Tokens => {
