@@ -1,33 +1,20 @@
 <script>
-	import { user, username } from './user';
+	import { user } from '$lib/session/user';
+	import Modal from '$lib/Modal.svelte';
+	import SignInForm from '$lib/session/SignInForm.svelte';
 
-	let un;
-	let pw;
-
-	function login() {
-		user.auth(un, pw, ({ err }) => err && alert(err));
-	}
-
-	function signup() {
-		user.create(un, pw, ({ err }) => {
-			if (err) {
-				alert(err);
-			} else {
-				login();
-			}
-		});
-	}
+	let isModalOpen = true;
 </script>
 
-{#if $username}
+{#if $user.alias}
 	<slot />
 {:else}
-	<label for="username">Username</label>
-	<input name="username" bind:value={un} minlength="3" maxlength="16" />
-
-	<label for="password">Password</label>
-	<input name="password" bind:value={pw} type="password" />
-
-	<button class="login" on:click={login}>Login</button>
-	<button class="login" on:click={signup}>Sign Up</button>
+	<Modal
+		bind:isModalOpen
+		background={false}
+		transition={{ y: -50, opacity: 0 }}
+		className="top-12 right-5 rounded-b-xl shadow-lg"
+	>
+		<SignInForm />
+	</Modal>
 {/if}

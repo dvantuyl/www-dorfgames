@@ -1,10 +1,5 @@
 <script>
-	import {
-		setupState,
-		readState,
-		writeState,
-		nextPlayerIndex as nextPlayerIndexFn
-	} from '../splendorf/game';
+	import { setupState, readState, writeState, nextPlayerIndex as nextPlayerIndexFn } from './game';
 	import { players as playersStore } from './game/stores/players';
 	import { tokens as tokensStore } from './game/stores/tokens';
 	import Board from './board/Board.svelte';

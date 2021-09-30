@@ -1,7 +1,7 @@
 <script context="module">
 	export async function load({ page }) {
 		try {
-			const Game = await import(`../../../lib/games/${page.params.game}/main.svelte`);
+			const Game = await import(`../../../lib/games/${page.params.game}/Game.svelte`);
 
 			return {
 				props: {
@@ -20,8 +20,9 @@
 
 <script>
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
-	import array from 'lodash/array.js';
-	import { username, db, user } from '$lib/session/user';
+	import _array from 'lodash/array.js';
+	import _object from 'lodash/object.js';
+	import { db, user } from '$lib/session/user';
 	import { onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
 	export let Game;
@@ -34,6 +35,7 @@
 	let room;
 
 	onMount(() => {
+		// Create Room
 		const url = new URL(window.location.href);
 		if (url.hash) {
 			room = url.hash.substring(1);
@@ -43,13 +45,15 @@
 			window.location.replace(url.href);
 		}
 
+		// Subscribe users added to room
 		db.get(game)
 			.get(room)
 			.get('players')
 			.map()
 			.on((data) => {
 				if (data && data.alias) {
-					const usersList = array.uniq([...users, data.alias]);
+					const user = _object.pick(data, ['uuid', 'alias']);
+					const usersList = _array.uniqBy([...users, user], 'uuid');
 					if (users.length < usersList.length) {
 						users = usersList;
 						console.log('updateusers', users);
@@ -57,6 +61,7 @@
 				}
 			});
 
+		// Subscribe game state update from another user
 		db.get(game)
 			.get(room)
 			.get('state')
@@ -71,11 +76,13 @@
 			});
 	});
 
-	$: if (room && $username) {
-		sessionUserId = $username;
-		db.get(game).get(room).get('players').set(user);
+	// Add User to room
+	$: if (room && $user.alias) {
+		sessionUserId = $user.uuid;
+		db.get(game).get(room).get('players').set($user);
 	}
 
+	// Publish local game to rest of the users
 	$: if (room && state && Object.values(state).length) {
 		db.get(game).get(room).get('state').put(JSON.stringify(state));
 	}

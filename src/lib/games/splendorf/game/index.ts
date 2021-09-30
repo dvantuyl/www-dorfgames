@@ -39,7 +39,7 @@ export type SetupStateParams = {
 	users: string[];
 };
 
-export function setupState(users: string[]): State {
+export function setupState(users: { uuid: string; alias: string }[]): State {
 	return {
 		i: 2,
 		players: setupPlayers(users),
@@ -78,8 +78,8 @@ function setupPlayers(users): Players {
 	const currentPlayerIndex = 0;
 	const list = users.map((user) => {
 		return {
-			id: user,
-			name: user,
+			id: user.uuid,
+			name: user.alias,
 			tokens: {
 				bk: 0,
 				wh: 0,
