@@ -25,6 +25,7 @@
 	import { db, user } from '$lib/session/user';
 	import { onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
+	import { roomUsers, roomState } from '$lib/room';
 	export let Game;
 	export let game;
 
@@ -44,37 +45,21 @@
 			url.hash = room;
 			window.location.replace(url.href);
 		}
-
-		// Subscribe users added to room
-		db.get(game)
-			.get(room)
-			.get('players')
-			.map()
-			.on((data) => {
-				if (data && data.alias) {
-					const user = _object.pick(data, ['uuid', 'alias']);
-					const usersList = _array.uniqBy([...users, user], 'uuid');
-					if (users.length < usersList.length) {
-						users = usersList;
-						console.log('updateusers', users);
-					}
-				}
-			});
-
-		// Subscribe game state update from another user
-		db.get(game)
-			.get(room)
-			.get('state')
-			.on((data) => {
-				if (data) {
-					const stateUpdate = JSON.parse(data);
-					if (stateUpdate.i !== state.i) {
-						state = stateUpdate;
-						console.log('updatestate', state);
-					}
-				}
-			});
 	});
+
+	// Subscribe to room users
+	$: if (game && room) {
+		roomUsers(game, room, (updatedUsers) => {
+			users = updatedUsers;
+		});
+	}
+
+	// Subscribe to room state
+	$: if (game && room) {
+		roomState(game, room, (updatedState) => {
+			state = updatedState;
+		});
+	}
 
 	// Add User to room
 	$: if (room && $user.alias) {

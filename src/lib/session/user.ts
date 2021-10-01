@@ -5,6 +5,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { writable } from 'svelte/store';
 import { variables } from '$lib/variables';
 
+export type User = {
+	uuid: string | null;
+	alias: string | null;
+	createdAt: number | null;
+};
+
 // Database
 const peers = variables.gunServer ? [`${variables.gunServer}`] : ['http://localhost:8765/gun'];
 
@@ -15,7 +21,7 @@ function createSessionStore(ref) {
 		uuid: null,
 		alias: null,
 		createdAt: null
-	});
+	} as User);
 
 	if (ref) {
 		ref.on(function (data) {
