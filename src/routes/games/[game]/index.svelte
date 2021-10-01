@@ -1,7 +1,7 @@
 <script context="module">
 	export async function load({ page }) {
 		try {
-			const Game = await import(`../../../lib/games/${page.params.game}/Game.svelte`);
+			const Game = await import(`../../../games/${page.params.game}/Game.svelte`);
 
 			return {
 				props: {
@@ -20,8 +20,6 @@
 
 <script>
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
-	import _array from 'lodash/array.js';
-	import _object from 'lodash/object.js';
 	import { db, user } from '$lib/session/user';
 	import { onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';

@@ -7,6 +7,6 @@ const getDirectories = (source) =>
 
 export async function get() {
 	return {
-		body: getDirectories('./src/lib/games')
+		body: getDirectories('./src/games')
 	};
 }

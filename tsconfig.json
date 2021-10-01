@@ -25,8 +25,8 @@
 		"paths": {
 			"$lib": ["src/lib"],
 			"$lib/*": ["src/lib/*"],
-			"$games": ["src/lib/games"],
-			"$games/*": ["src/lib/games/*"]
+			"$games": ["src/games"],
+			"$games/*": ["src/games/*"]
 		}
 	},
 	"include": [
