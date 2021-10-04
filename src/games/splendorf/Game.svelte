@@ -1,10 +1,11 @@
 <script>
+	import { publishState } from '$lib/room/publishState';
 	import { setupState, readState, writeState, nextPlayerIndex as nextPlayerIndexFn } from './game';
 	import { players as playersStore } from './game/stores/players';
 	import { tokens as tokensStore } from './game/stores/tokens';
 	import Board from './board/Board.svelte';
 
-	export const title = 'Splendorf';
+	export let ctx;
 	export let state;
 	export let users;
 	export let sessionUserId;
@@ -12,6 +13,7 @@
 	$: {
 		if (state.i === 1) {
 			state = setupState(users);
+			publishState({ ...ctx, state });
 		} else {
 			readState(state);
 		}
@@ -32,6 +34,7 @@
 		switch (event.detail.value) {
 			case 'endTurn':
 				state = writeState(nextPlayerIndex, players, tokens, state);
+				publishState({ ...ctx, state });
 				break;
 		}
 	}

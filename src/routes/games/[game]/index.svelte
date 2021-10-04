@@ -28,7 +28,6 @@
 	export let game;
 
 	let sessionUserId;
-	let title;
 	let state = { i: 0 };
 	let users = [];
 	let room;
@@ -65,23 +64,18 @@
 		db.get(game).get(room).get('players').set($user);
 	}
 
-	// Publish local game to rest of the users
-	$: if (room && state && Object.values(state).length) {
-		db.get(game).get(room).get('state').put(JSON.stringify(state));
-	}
-
 	function startGame() {
 		state = { i: 1 };
 	}
 </script>
 
 <svelte:head>
-	<title>{title || game}</title>
+	<title>{game}</title>
 </svelte:head>
 
 <SessionWrapper>
 	{#if state.i > 0}
-		<svelte:component this={Game} {users} {sessionUserId} bind:state bind:title />
+		<svelte:component this={Game} {users} {sessionUserId} {state} ctx={{ game, room }} />
 	{:else}
 		<main class="px-5">
 			<button on:click={startGame}>Start Game</button>
