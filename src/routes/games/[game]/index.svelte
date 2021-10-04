@@ -25,7 +25,7 @@
 	import { db, user } from '$lib/session/user';
 	import { onMount } from 'svelte';
 	import { v4 as uuidv4 } from 'uuid';
-	import { waitingRooms, roomUsers, roomState } from '$lib/room';
+	import { joinedRooms, waitingRooms, roomUsers, roomState } from '$lib/room';
 	export let Game;
 	export let game;
 
@@ -35,6 +35,7 @@
 	let room;
 	let stateIndex = 0;
 	let waitingRoomList = [];
+	let joinedRoomList = [];
 
 	onMount(() => {
 		const url = new URL(window.location.href);
@@ -64,10 +65,17 @@
 		});
 	}
 
+	$: if (game && !room && $user.uuid) {
+		joinedRooms(game, $user.uuid, (updatedRooms) => {
+			joinedRoomList = updatedRooms;
+		});
+	}
+
 	// Add User to room
 	$: if (room && $user.alias) {
 		sessionUserId = $user.uuid;
 		db.get(game).get(room).get('players').set($user);
+		db.get(`users/${$user.uuid}`).get(game).get('rooms').set(room);
 	}
 
 	function createGame() {
@@ -113,6 +121,7 @@
 		<div class="px-5">
 			<button on:click={createGame}>Create Game</button>
 		</div>
+		<RoomIndex on:click={enterRoom} title="Joined Rooms" rooms={joinedRoomList} {game} />
 		<RoomIndex on:click={enterRoom} title="Waiting Rooms" rooms={waitingRoomList} {game} />
 	{/if}
 </SessionWrapper>
