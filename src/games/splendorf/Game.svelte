@@ -1,5 +1,5 @@
 <script>
-	import { publishState } from '$lib/room/publishState';
+	import { publishState } from '$lib/room';
 	import { setupState, readState, writeState, nextPlayerIndex as nextPlayerIndexFn } from './game';
 	import { players as playersStore } from './game/stores/players';
 	import { tokens as tokensStore } from './game/stores/tokens';

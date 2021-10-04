@@ -1,6 +1,5 @@
 import { db } from '$lib/session/user';
 import type { User } from '$lib/session/user';
-import _array from 'lodash/array.js';
 import _object from 'lodash/object.js';
 import isEqual from 'lodash/isEqual.js';
 
