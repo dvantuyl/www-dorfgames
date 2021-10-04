@@ -28,9 +28,10 @@
 	export let game;
 
 	let sessionUserId;
-	let state = { i: 0 };
-	let users = [];
+	let state;
+	let users;
 	let room;
+	let stateIndex = 0;
 
 	onMount(() => {
 		// Create Room
@@ -53,7 +54,8 @@
 
 	// Subscribe to room state
 	$: if (game && room) {
-		roomState(game, room, (updatedState) => {
+		roomState(game, room, (nextStateIndex, updatedState) => {
+			stateIndex = nextStateIndex;
 			state = updatedState;
 		});
 	}
@@ -65,7 +67,7 @@
 	}
 
 	function startGame() {
-		state = { i: 1 };
+		stateIndex = 1;
 	}
 </script>
 
@@ -74,8 +76,14 @@
 </svelte:head>
 
 <SessionWrapper>
-	{#if state.i > 0}
-		<svelte:component this={Game} {users} {sessionUserId} {state} ctx={{ game, room }} />
+	{#if stateIndex}
+		<svelte:component
+			this={Game}
+			{users}
+			{sessionUserId}
+			{state}
+			ctx={{ stateIndex, game, room }}
+		/>
 	{:else}
 		<main class="px-5">
 			<button on:click={startGame}>Start Game</button>

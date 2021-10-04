@@ -11,7 +11,7 @@
 	export let sessionUserId;
 
 	$: {
-		if (state.i === 1) {
+		if (ctx.stateIndex === 1) {
 			state = setupState(users);
 			publishState({ ...ctx, state });
 		} else {
@@ -33,7 +33,7 @@
 	function handleAction(event) {
 		switch (event.detail.value) {
 			case 'endTurn':
-				state = writeState(nextPlayerIndex, players, tokens, state);
+				state = writeState(nextPlayerIndex, players, tokens);
 				publishState({ ...ctx, state });
 				break;
 		}

@@ -1,7 +1,6 @@
 import { players, tokens } from './stores';
 
 export type State = {
-	i: number;
 	players: Players;
 	tokens: Tokens;
 };
@@ -41,7 +40,6 @@ export type SetupStateParams = {
 
 export function setupState(users: { uuid: string; alias: string }[]): State {
 	return {
-		i: 2,
 		players: setupPlayers(users),
 		tokens: setupTokens(users.length)
 	};
@@ -56,19 +54,13 @@ export function nextPlayerIndex(currentPlayerIndex: number, numPlayers: number):
 	return currentPlayerIndex === numPlayers - 1 ? 0 : currentPlayerIndex + 1;
 }
 
-export function writeState(
-	playerIndex: number,
-	playerList: Player[],
-	tokens: Tokens,
-	state: State
-): State {
+export function writeState(playerIndex: number, playerList: Player[], tokens: Tokens): State {
 	const players = {
 		currentPlayerIndex: playerIndex,
 		list: playerList
 	};
 
 	return {
-		i: state.i + 1,
 		players,
 		tokens
 	};
