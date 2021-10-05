@@ -14,11 +14,9 @@
 		dispatch('click', { room });
 	}
 
-	$: if (player) {
-		rooms.withPlayer(player, game, (playerRooms) => {
-			joinedRooms = Object.entries(playerRooms);
-		});
-	}
+	rooms.withPlayer(player, game, (playerRooms) => {
+		joinedRooms = Object.entries(playerRooms);
+	});
 </script>
 
 {#if joinedRooms.length}
