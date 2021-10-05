@@ -31,7 +31,9 @@
 
 	let players = [];
 	let roomKey;
+	let stateIndex = 0;
 	let room;
+	let state;
 
 	onMount(() => {
 		const url = new URL(window.location.href);
@@ -41,13 +43,20 @@
 	});
 
 	$: if (roomKey) {
-		rooms.room(roomKey).subscribe((r) => (room = r));
-		rooms.room(roomKey).players((p) => (players = p));
+		room = rooms.get(roomKey);
+	}
+
+	$: if (room) {
+		room.subscribe((updatedRoom) => {
+			stateIndex = updatedRoom.stateIndex;
+			state = JSON.parse(updatedRoom.state);
+		});
+		room.players((p) => (players = p));
 	}
 
 	// Add User to room
-	$: if (roomKey && $user.alias) {
-		rooms.room(roomKey).addPlayer($user);
+	$: if (room && $user.alias) {
+		room.addPlayer($user);
 	}
 
 	function createGame() {
@@ -65,7 +74,7 @@
 	}
 
 	function startGame() {
-		rooms.room(roomKey).publishState({});
+		room.publishState({});
 	}
 </script>
 
@@ -74,18 +83,18 @@
 </svelte:head>
 
 <SessionWrapper>
-	{#if room && room.stateIndex > 0}
+	{#if room && stateIndex > 0}
 		<svelte:component
 			this={Game}
 			room={{
-				init: room.stateIndex === 1,
+				init: stateIndex === 1,
 				players,
 				sessionPlayer: $user,
-				publishState: rooms.room(roomKey).publishState
+				publishState: room.publishState
 			}}
-			state={JSON.parse(room.state)}
+			{state}
 		/>
-	{:else if room && room.stateIndex === 0}
+	{:else if room && stateIndex === 0}
 		<div class="px-5">
 			<button on:click={startGame}>Start Game</button>
 			<div class="flex flex-col bg-red-300 p-4">

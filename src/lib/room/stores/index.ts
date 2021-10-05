@@ -26,7 +26,7 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 		}
 	});
 
-	const room = (key: string) => {
+	const get = (key: string) => {
 		const roomRef = ref.get(key);
 		function addPlayer(player: User): void {
 			const node = db.get(`users/${player.uuid}`);
@@ -86,7 +86,7 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 
 	return {
 		create,
-		room
+		get
 	};
 }
 
