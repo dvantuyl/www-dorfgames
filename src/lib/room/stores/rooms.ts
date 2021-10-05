@@ -59,8 +59,7 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 				.map()
 				.on((data) => {
 					if (data && data.alias) {
-						const player = _object.pick(data, ['uuid', 'alias']);
-						const updatedPlayers = { ...currentPlayers, [player.uuid]: player };
+						const updatedPlayers = { ...currentPlayers, [data.uuid]: data };
 						if (!isEqual(currentPlayers, updatedPlayers)) {
 							currentPlayers = updatedPlayers;
 							callback(Object.values(currentPlayers));
