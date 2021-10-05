@@ -26,12 +26,30 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 		}
 	});
 
+	function withPlayer(player: User, game: string, callback) {
+		let currentRooms: Record<string, Room> = {};
+
+		db.get(`users/${player.uuid}`)
+			.get('rooms')
+			.map()
+			.on((room, key) => {
+				if (room && room.game === game) {
+					const updatedRooms = { ...currentRooms, [key]: room };
+					if (!isEqual(currentRooms, updatedRooms)) {
+						currentRooms = updatedRooms;
+						callback(currentRooms);
+					}
+				}
+			});
+	}
+
 	const get = (key: string) => {
 		const roomRef = ref.get(key);
 
 		function addPlayer(player: User): void {
-			const node = db.get(`users/${player.uuid}`);
-			roomRef.get('players').set(node);
+			const userRef = db.get(`users/${player.uuid}`);
+			roomRef.get('players').set(userRef);
+			userRef.get('rooms').set(roomRef);
 		}
 
 		function players(callback): void {
@@ -86,6 +104,7 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 	}
 
 	return {
+		withPlayer,
 		create,
 		get,
 		subscribe

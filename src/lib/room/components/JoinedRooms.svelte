@@ -6,27 +6,29 @@
 	import RoomItem from '$lib/room/components/RoomItem.svelte';
 
 	export let game;
+	export let player;
 	const dispatch = createEventDispatcher();
+	let joinedRooms = [];
 
 	function forwardClick(room) {
 		dispatch('click', { room });
 	}
 
-	const waitingRooms = derived(rooms, ($rooms) =>
-		_object.pickBy($rooms, (room) => room.stateIndex === 0 && room.game === game)
-	);
-
-	$: waitingRoomsList = Object.entries($waitingRooms);
+	$: if (player) {
+		rooms.withPlayer(player, game, (playerRooms) => {
+			joinedRooms = Object.entries(playerRooms);
+		});
+	}
 </script>
 
-{#if waitingRoomsList.length}
+{#if joinedRooms.length}
 	<div class="rounded bg-purple-100 p-4">
-		<h3 class="text-2xl font-bold mb-2">Waiting Rooms</h3>
+		<h3 class="text-2xl font-bold mb-2">Joined Rooms</h3>
 		<div class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-5 gap-4">
-			{#each waitingRoomsList as waitingRoom (waitingRoom[0])}
+			{#each joinedRooms as joinedRoom (joinedRoom[0])}
 				<RoomItem
-					key={waitingRoom[0]}
-					on:click={() => forwardClick(waitingRoom[0])}
+					key={joinedRoom[0]}
+					on:click={() => forwardClick(joinedRoom[0])}
 					innerClass="block text-lg mb-2 last:mb-0"
 				/>
 			{/each}

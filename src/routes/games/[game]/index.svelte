@@ -21,6 +21,7 @@
 <script lang="ts">
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
 	import WaitingRooms from '$lib/room/components/WaitingRooms.svelte';
+	import JoinedRooms from '$lib/room/components/JoinedRooms.svelte';
 	import WaitingRoom from '$lib/room/components/WaitingRoom.svelte';
 	import { user } from '$lib/session/user';
 	import { onMount } from 'svelte';
@@ -99,7 +100,7 @@
 		<div class="px-5">
 			<button on:click={createGame}>Create Game</button>
 		</div>
-		<!-- <RoomIndex on:click={enterRoom} title="Joined Rooms" {game} /> -->
+		<JoinedRooms on:click={enterRoom} {game} player={$user} />
 		<WaitingRooms on:click={enterRoom} {game} />
 	{/if}
 </SessionWrapper>
