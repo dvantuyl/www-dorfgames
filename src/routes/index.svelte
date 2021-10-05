@@ -3,9 +3,15 @@
 		const res = await fetch('/games.json');
 
 		if (res.ok) {
+			const gameMap = await res.json();
+			const games = Object.entries(gameMap).reduce(
+				(entries, [key, title]) => [...entries, { key, title }],
+				[]
+			);
+
 			return {
 				props: {
-					games: await res.json()
+					games
 				}
 			};
 		}
@@ -25,15 +31,13 @@
 	<title>Dorfgames</title>
 </svelte:head>
 
-<section class="w-full h-full flex justify-center items-center">
-	<h1 class="text-3xl bold text-green-600">You've Dorfed and gone to Dorf!!</h1>
-</section>
+<h1 class="text-4xl sm:text-8xl text-center my-10 sm:my-24 font-bold">Dorfgames</h1>
 
-<div class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-5 gap-4">
+<section class="w-full h-full grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-5 gap-4">
 	{#each games as game}
 		<a
 			class="block rounded bg-green-400 text-green-900 font-bold text-2xl text-center capitalize p-4"
-			href="/games/{game}">{game}</a
+			href="/games/{game.key}">{game.title}</a
 		>
 	{/each}
-</div>
+</section>

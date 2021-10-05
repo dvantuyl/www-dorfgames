@@ -2,13 +2,18 @@
 	import { user } from '$lib/session/user';
 	import Modal from '$lib/Modal.svelte';
 	import SignInForm from '$lib/session/SignInForm.svelte';
+	import { page } from '$app/stores';
 
 	let isModalOpen = false;
+
+	$: showTitle = $page.path !== '/';
 </script>
 
 <div class="flex justify-between items-center h-full w-full">
 	<div class="flex items-bottom">
-		<h1 class="text-xl font-bold"><a href="/">Dorfgames</a></h1>
+		{#if showTitle}
+			<h1 class="text-xl font-bold"><a href="/">Dorfgames</a></h1>
+		{/if}
 	</div>
 
 	{#if $user.alias}

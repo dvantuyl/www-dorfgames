@@ -1,18 +1,31 @@
 <script context="module">
-	export async function load({ page }) {
+	export async function load({ page, fetch }) {
 		try {
 			const Game = await import(`../../../games/${page.params.game}/Game.svelte`);
+			const res = await fetch('/games.json');
+
+			if (res.ok) {
+				const gameMap = await res.json();
+				const game = page.params.game;
+				const gameTitle = gameMap[game];
+
+				return {
+					props: {
+						Game: Game.default,
+						game,
+						gameTitle
+					}
+				};
+			}
 
 			return {
-				props: {
-					Game: Game.default,
-					game: page.params.game
-				}
+				status: res.status,
+				error: new Error('Could not load /games.json')
 			};
 		} catch (e) {
 			return {
 				status: 404,
-				error: `Game '${page.params.game}' not found`
+				error: `Game.svelte not found in '/src/games/${page.params.game}'`
 			};
 		}
 	}
@@ -29,12 +42,14 @@
 	import { rooms } from '$lib/room/stores';
 	export let Game;
 	export let game;
+	export let gameTitle;
 
 	let players = [];
 	let roomKey;
 	let stateIndex = 0;
 	let room;
 	let state;
+	let roomTitle = '';
 
 	onMount(() => {
 		const url = new URL(window.location.href);
@@ -49,6 +64,7 @@
 
 	$: if (room) {
 		room.subscribe((updatedRoom) => {
+			roomTitle = updatedRoom.title;
 			stateIndex = updatedRoom.stateIndex;
 			state = updatedRoom.state ? JSON.parse(updatedRoom.state) : {};
 		});
@@ -81,7 +97,7 @@
 </script>
 
 <svelte:head>
-	<title>{game}</title>
+	<title>{gameTitle}</title>
 </svelte:head>
 
 <SessionWrapper>
@@ -97,8 +113,12 @@
 			{state}
 		/>
 	{:else if room && stateIndex === 0}
+		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center">
+			{gameTitle}<br />{roomTitle}
+		</h2>
 		<WaitingRoom {players} on:startGame={handleStartGame} />
 	{:else}
+		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center">{gameTitle}</h2>
 		<div class="px-5">
 			<button on:click={createGame}>Create Game</button>
 		</div>
