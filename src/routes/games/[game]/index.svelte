@@ -21,7 +21,7 @@
 <script lang="ts">
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
 	import RoomIndex from '$lib/room/components/RoomIndex.svelte';
-	import RoomPlayers from '$lib/room/components/RoomPlayers.svelte';
+	import WaitingRoom from '$lib/room/components/WaitingRoom.svelte';
 	import { user } from '$lib/session/user';
 	import { onMount } from 'svelte';
 	//import { joinedRooms, waitingRooms, roomUsers, roomState } from '$lib/room';
@@ -49,7 +49,7 @@
 	$: if (room) {
 		room.subscribe((updatedRoom) => {
 			stateIndex = updatedRoom.stateIndex;
-			state = JSON.parse(updatedRoom.state);
+			state = updatedRoom.state ? JSON.parse(updatedRoom.state) : {};
 		});
 		room.players((p) => (players = p));
 	}
@@ -73,7 +73,7 @@
 		window.location.replace(url.href);
 	}
 
-	function startGame() {
+	function handleStartGame() {
 		room.publishState({});
 	}
 </script>
@@ -95,12 +95,7 @@
 			{state}
 		/>
 	{:else if room && stateIndex === 0}
-		<div class="px-5">
-			<button on:click={startGame}>Start Game</button>
-			<div class="flex flex-col bg-red-300 p-4">
-				<!-- <RoomPlayers {game} {room} innerClass="block text-lg mb-2 last:mb-0" /> -->
-			</div>
-		</div>
+		<WaitingRoom {players} on:startGame={handleStartGame} />
 	{:else}
 		<div class="px-5">
 			<button on:click={createGame}>Create Game</button>
