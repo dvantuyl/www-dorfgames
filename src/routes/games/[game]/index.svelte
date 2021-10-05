@@ -25,6 +25,7 @@
 	import WaitingRoom from '$lib/room/components/WaitingRoom.svelte';
 	import { user } from '$lib/session/user';
 	import { onMount } from 'svelte';
+	import { generateTitle } from '$lib/room/generateTitle';
 	import { rooms } from '$lib/room/stores';
 	export let Game;
 	export let game;
@@ -55,13 +56,14 @@
 	}
 
 	// Add User to room
-	$: if (room && room.stateIndex === 0 && $user.alias) {
+	$: if (room && stateIndex === 0 && $user.alias) {
 		room.addPlayer($user);
 	}
 
 	function createGame() {
 		const url = new URL(window.location.href);
-		roomKey = rooms.create(game);
+		const title = generateTitle();
+		roomKey = rooms.create(game, title);
 		url.hash = roomKey;
 		window.location.replace(url.href);
 	}
@@ -101,6 +103,7 @@
 			<button on:click={createGame}>Create Game</button>
 		</div>
 		<JoinedRooms on:click={enterRoom} {game} player={$user} />
+		<br />
 		<WaitingRooms on:click={enterRoom} {game} />
 	{/if}
 </SessionWrapper>

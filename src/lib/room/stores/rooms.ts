@@ -7,16 +7,17 @@ import isEqual from 'lodash/isEqual.js';
 
 export type Room = {
 	game: string;
+	title: string;
 	stateIndex: number;
-	title?: string;
-	state?: '';
+	state: string;
 };
 
 function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 	const { subscribe, set, update } = writable({} as Record<string, Room>);
 
 	ref.map().on((data, key) => {
-		if (data) {
+		if (data && data.title) {
+			console.log('room', key, data);
 			update((rooms) => ({ ...rooms, [key]: data }));
 		} else {
 			update((rooms) => {
@@ -93,13 +94,14 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 		};
 	};
 
-	function create(game: string): string {
-		const node = ref.set({
+	function create(game: string, title: string): string {
+		const roomRef = ref.set({
 			game,
+			title,
 			stateIndex: 0,
 			state: ''
 		});
-		return node._.get;
+		return roomRef._.get;
 	}
 
 	return {
