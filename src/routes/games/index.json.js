@@ -1,5 +1,5 @@
 import { readdirSync } from 'fs';
-import capitalize from 'lodash/capitalize';
+import capitalize from 'lodash/capitalize.js';
 
 const getDirectories = (source) =>
 	readdirSync(source, { withFileTypes: true })
