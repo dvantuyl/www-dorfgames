@@ -55,7 +55,7 @@
 	}
 
 	// Add User to room
-	$: if (room && $user.alias) {
+	$: if (room && room.stateIndex === 0 && $user.alias) {
 		room.addPlayer($user);
 	}
 
