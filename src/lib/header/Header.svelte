@@ -8,10 +8,7 @@
 
 <div class="flex justify-between items-center h-full w-full">
 	<div class="flex items-bottom">
-		<h1 class="text-xl font-bold"><a href="/">Dorfgames.com</a></h1>
-		<div class="divide-x divide-green-500 flex items-center ml-5">
-			<span class="block"><a href="/games">Games</a></span>
-		</div>
+		<h1 class="text-xl font-bold"><a href="/">Dorfgames</a></h1>
 	</div>
 
 	{#if $user.alias}
