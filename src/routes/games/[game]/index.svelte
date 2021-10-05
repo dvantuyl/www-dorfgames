@@ -49,7 +49,7 @@
 	let stateIndex = 0;
 	let room;
 	let state;
-	let roomTitle = '';
+	let roomTitle;
 
 	onMount(() => {
 		const url = new URL(window.location.href);
@@ -97,7 +97,7 @@
 </script>
 
 <svelte:head>
-	<title>{gameTitle}</title>
+	<title>{gameTitle}{roomTitle ? ` [${roomTitle}]` : ''}</title>
 </svelte:head>
 
 <SessionWrapper>
@@ -113,12 +113,12 @@
 			{state}
 		/>
 	{:else if room && stateIndex === 0}
-		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center">
-			{gameTitle}<br />{roomTitle}
+		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">
+			{gameTitle}<br />[{roomTitle}]
 		</h2>
 		<WaitingRoom {players} on:startGame={handleStartGame} />
 	{:else}
-		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center">{gameTitle}</h2>
+		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">{gameTitle}</h2>
 		<div class="px-5">
 			<button on:click={createGame}>Create Game</button>
 		</div>
