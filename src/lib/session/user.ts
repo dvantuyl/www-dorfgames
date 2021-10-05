@@ -64,8 +64,7 @@ function getDbUser() {
 		const key = 'userId';
 		let uuid = JSON.parse(localStorage.getItem(key));
 		if (uuid) {
-			const user = db.get(`users/${uuid}`);
-			return user;
+			return db.get(`users/${uuid}`);
 		} else {
 			uuid = uuidv4();
 			localStorage.setItem(key, JSON.stringify(uuid));

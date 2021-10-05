@@ -1,19 +1,16 @@
 <script>
-	import { publishState } from '$lib/room';
 	import { setupState, readState, writeState, nextPlayerIndex as nextPlayerIndexFn } from './game';
 	import { players as playersStore } from './game/stores/players';
 	import { tokens as tokensStore } from './game/stores/tokens';
 	import Board from './board/Board.svelte';
 
-	export let ctx;
+	export let room;
 	export let state;
-	export let users;
-	export let sessionUserId;
 
 	$: {
-		if (ctx.stateIndex === 1) {
-			state = setupState(users);
-			publishState({ ...ctx, state });
+		if (room.init) {
+			state = setupState(room.players);
+			room.publishState(state);
 		} else {
 			readState(state);
 		}
@@ -27,14 +24,14 @@
 	function takeToken(event) {
 		const color = event.detail.color;
 		tokensStore.decrement(color);
-		playersStore.player(sessionUserId).tokens.increment(color);
+		playersStore.player(room.sessionPlayer.uuid).tokens.increment(color);
 	}
 
 	function handleAction(event) {
 		switch (event.detail.value) {
 			case 'endTurn':
 				state = writeState(nextPlayerIndex, players, tokens);
-				publishState({ ...ctx, state });
+				room.publishState(state);
 				break;
 		}
 	}
