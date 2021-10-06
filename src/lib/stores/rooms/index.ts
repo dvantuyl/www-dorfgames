@@ -1,6 +1,6 @@
 import type { User } from '$lib/types';
 import type { IGunChainReference } from 'gun/types/chain';
-import { db } from '$lib/stores';
+import { db, session } from '$lib/stores';
 import isEqual from 'lodash/isEqual.js';
 
 export type Room = {
@@ -11,15 +11,15 @@ export type Room = {
 };
 
 function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
-	function joined(player: User, game: string, callback): IGunChainReference<any, 'rooms', false> {
+	function joined(game: string, callback): IGunChainReference<any, 'rooms', false> {
 		let $rooms: Record<string, Room> = {};
 
-		return db
-			.get(`users/${player.uuid}`)
+		return session
+			.userRef()
 			.get('rooms')
 			.map()
 			.on((room, key) => {
-				// db.get(`users/${player.uuid}`).get('rooms').get(key).put(null); // DELETE ALL JOINED ROOMS
+				// session.userRef().get('rooms').get(key).put(null); // DELETE ALL JOINED ROOMS
 				if (room && room.game === game) {
 					const updatedRooms = { ...$rooms, [key]: room };
 					if (!isEqual($rooms, updatedRooms)) {
@@ -51,10 +51,9 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 	const get = (key: string) => {
 		const roomRef = ref.get(key);
 
-		function addPlayer(player: User): void {
-			const userRef = db.get(`users/${player.uuid}`);
-			roomRef.get('players').set(userRef);
-			userRef.get('rooms').set(roomRef);
+		function join(): void {
+			roomRef.get('players').set(session.userRef());
+			session.userRef().get('rooms').set(roomRef);
 		}
 
 		function players(callback): IGunChainReference<any, 'players', false> {
@@ -99,7 +98,7 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 		}
 
 		return {
-			addPlayer,
+			join,
 			players,
 			publishState,
 			subscribe,

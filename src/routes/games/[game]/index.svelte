@@ -49,7 +49,7 @@
 	let players = [];
 	let roomKey;
 	let stateIndex = 0;
-	let roomRef;
+	let roomStore;
 	let state;
 	let roomTitle;
 	let subscriptions = new Set<IGunChainReference>();
@@ -71,28 +71,28 @@
 			roomKey = url.hash.substring(1);
 		} else {
 			roomKey = null;
-			roomRef = null;
+			roomStore = null;
 		}
 	}
 
 	$: if (roomKey) {
-		roomRef = rooms.get(roomKey);
+		roomStore = rooms.get(roomKey);
 	}
 
-	$: if (roomRef) {
+	$: if (roomStore) {
 		subscriptions.add(
-			roomRef.subscribe((updatedRoom) => {
+			roomStore.subscribe((updatedRoom) => {
 				roomTitle = updatedRoom.title;
 				stateIndex = updatedRoom.stateIndex;
 				state = updatedRoom.state ? JSON.parse(updatedRoom.state) : {};
 			})
 		);
-		subscriptions.add(roomRef.players((p) => (players = p)));
+		subscriptions.add(roomStore.players((p) => (players = p)));
 	}
 
 	// Add User to room
-	$: if (roomRef && stateIndex === 0 && $session.user.alias) {
-		roomRef.addPlayer($session.user);
+	$: if (roomStore && stateIndex === 0 && $session.user) {
+		roomStore.join();
 	}
 
 	function createGame() {
@@ -111,7 +111,7 @@
 	}
 
 	function handleStartGame() {
-		roomRef.publishState({});
+		roomStore.publishState({});
 	}
 </script>
 
@@ -120,18 +120,18 @@
 </svelte:head>
 
 <SessionWrapper>
-	{#if roomRef && stateIndex > 0}
+	{#if roomStore && stateIndex > 0}
 		<svelte:component
 			this={Game}
 			room={{
 				init: stateIndex === 1,
 				players,
 				sessionPlayer: $session.user,
-				publishState: roomRef.publishState
+				publishState: roomStore.publishState
 			}}
 			{state}
 		/>
-	{:else if roomRef && stateIndex === 0}
+	{:else if roomStore && stateIndex === 0}
 		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">
 			{roomTitle || roomKey}
 		</h2>
@@ -141,7 +141,7 @@
 		<div class="px-5">
 			<button on:click={createGame}>Create Game</button>
 		</div>
-		<JoinedRooms on:click={enterRoom} {game} player={$session.user} />
+		<JoinedRooms on:click={enterRoom} {game} />
 		<br />
 		<WaitingRooms on:click={enterRoom} {game} />
 	{/if}

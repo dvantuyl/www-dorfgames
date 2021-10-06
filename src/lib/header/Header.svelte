@@ -65,7 +65,7 @@
 
 	<div class="flex gap-2 divide-x-2 divide-green-500 items-center">
 		<div><a href="/games" class="font-semibold">Games</a></div>
-		{#if $session.user.alias}
+		{#if $session.user}
 			<div class="flex items-center pl-2">
 				<button class="flex items-center">
 					<span on:click={() => (isModalOpen = true)} class="font-bold block mr-2"
@@ -74,11 +74,11 @@
 					<img
 						on:click={() => (isModalOpen = true)}
 						class="block w-10 mr-5"
-						src={`https://avatars.dicebear.com/api/initials/${$session.user.alias}.svg`}
+						src={`https://avatars.dicebear.com/api/initials/${$session.user}.svg`}
 						alt="avatar"
 					/>
 				</button>
-				<button class="signout-button block font-semibold" on:click={() => session.signout()}>
+				<button class="signout-button block font-semibold" on:click={() => session.logout()}>
 					Sign Out
 				</button>
 			</div>

@@ -6,7 +6,7 @@
 	let isModalOpen = true;
 </script>
 
-{#if $session.user.alias}
+{#if $session.user}
 	<slot />
 {:else}
 	<Modal

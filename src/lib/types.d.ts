@@ -12,3 +12,7 @@ export type User = {
 	createdAt: number;
 	loginAt: number;
 };
+
+export type Session = {
+	user?: User;
+};

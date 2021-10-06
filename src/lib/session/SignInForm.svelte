@@ -1,23 +1,19 @@
 <script>
-	import { onMount } from 'svelte';
-
 	import { session } from '$lib/stores';
 
 	export let isModalOpen;
 
 	let alias = '';
 
-	$: label = $session.user.alias ? 'Change Name' : `Hi ${alias}!`;
-	$: buttonText = $session.user.alias ? 'Party!' : "Let's Go!";
+	$: label = $session.user ? 'Change Name' : `Hi ${alias}!`;
+	$: buttonText = $session.user ? 'Party!' : "Let's Go!";
 
-	onMount(() => {
-		if ($session.user.alias) {
-			alias = $session.user.alias;
-		}
-	});
+	$: if ($session.user) {
+		alias = $session.user.alias;
+	}
 
 	function letsGo() {
-		session.user.setAlias(alias);
+		session.register(alias);
 		isModalOpen = false;
 	}
 

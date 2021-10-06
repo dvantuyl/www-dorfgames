@@ -4,7 +4,6 @@
 	import RoomItem from '$lib/rooms/RoomItem.svelte';
 
 	export let game;
-	export let player;
 	const dispatch = createEventDispatcher();
 	let joinedRooms = [];
 
@@ -14,7 +13,7 @@
 		dispatch('click', { room });
 	}
 
-	const ref = rooms.joined(player, game, (updatedRooms) => {
+	const ref = rooms.joined(game, (updatedRooms) => {
 		joinedRooms = Object.entries(updatedRooms);
 	});
 </script>

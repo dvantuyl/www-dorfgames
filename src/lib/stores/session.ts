@@ -1,18 +1,56 @@
-import type { User } from '$lib/types';
-import { browser } from '$app/env';
-import { v4 as uuidv4 } from 'uuid';
+import type { Session } from '$lib/types';
 import { writable } from 'svelte/store';
 import { db } from './db';
 import { pick } from 'lodash';
+import type { IGunChainReference } from 'gun/types/chain';
+import { browser } from '$app/env';
 
-function createSessionStore(ref) {
-	const { subscribe, set, update } = writable({ user: {} } as {
-		user: User | Record<string, unknown>;
-	});
+function createSessionStore() {
+	const { subscribe, set, update } = writable({} as Session);
+	let $userRef: IGunChainReference<any, 'users', 'root'>;
 
-	if (ref) {
-		ref.on(function (data) {
-			const user = pick(data, ['uuid', 'alias', 'createdAt', 'loginAt']);
+	if (userRef()) {
+		userRef().once((data) => {
+			const user = pick(data, ['alias', 'createdAt', 'loginAt']);
+			const loginAt = Date.now();
+			userRef().put({ ...user, loginAt });
+		});
+		initUserRefSubscription(userRef());
+	}
+
+	function userRef() {
+		if ($userRef) {
+			return $userRef;
+		} else if (localStorageUserId()) {
+			$userRef = db.get('users').get(localStorageUserId());
+			return $userRef;
+		} else {
+			return null;
+		}
+	}
+
+	function localStorageUserId() {
+		if (browser) {
+			const key = 'userId';
+			return JSON.parse(localStorage.getItem(key));
+		} else {
+			return null;
+		}
+	}
+
+	function register(alias: string): void {
+		if (browser) {
+			const key = 'userId';
+			const loginAt = Date.now();
+			$userRef = db.get('users').set({ alias, createdAt: loginAt, loginAt });
+			localStorage.setItem(key, JSON.stringify($userRef._.get));
+			initUserRefSubscription($userRef);
+		}
+	}
+
+	function initUserRefSubscription(ref) {
+		ref.on(function (data, uuid) {
+			const user = { ...pick(data, ['alias', 'createdAt', 'loginAt']), uuid };
 			update((session) => {
 				return { ...session, user };
 			});
@@ -20,49 +58,30 @@ function createSessionStore(ref) {
 	}
 
 	function setAlias(alias: string) {
-		update((session) => {
-			const user = { ...session.user, alias };
-			ref.put(user);
-			return { ...session, user };
-		});
+		if (userRef()) {
+			update((session) => {
+				const user = { ...session.user, alias };
+				userRef().put({ ...pick(user, ['alias', 'createdAt', 'loginAt']) });
+				return { ...session, user };
+			});
+		}
 	}
 
-	function signout() {
-		const key = 'userId';
-		localStorage.setItem(key, null);
-
-		set({ user: {} });
+	function logout() {
+		if (browser) {
+			const key = 'userId';
+			localStorage.setItem(key, null);
+			set({});
+		}
 	}
 
 	return {
-		user: {
-			setAlias
-		},
+		setAlias,
 		subscribe,
-		signout
+		register,
+		userRef,
+		logout
 	};
 }
 
-function getDbUser() {
-	if (browser) {
-		const key = 'userId';
-		let uuid = JSON.parse(localStorage.getItem(key));
-		const loginAt = Date.now();
-		if (uuid) {
-			const ref = db.get('users').get(uuid);
-			ref.once((data) => {
-				const user = pick(data, ['uuid', 'alias', 'createdAt', 'loginAt']);
-				ref.put({ ...user, loginAt });
-			});
-			return ref;
-		} else {
-			uuid = uuidv4();
-			localStorage.setItem(key, JSON.stringify(uuid));
-			const ref = db.get('users').get(uuid);
-			ref.put({ uuid, createdAt: loginAt, loginAt });
-			return ref;
-		}
-	}
-}
-
-export const session = createSessionStore(getDbUser());
+export const session = createSessionStore();
