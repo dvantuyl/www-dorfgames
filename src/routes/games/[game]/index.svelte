@@ -33,13 +33,13 @@
 
 <script lang="ts">
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
-	import WaitingRooms from '$lib/room/components/WaitingRooms.svelte';
-	import JoinedRooms from '$lib/room/components/JoinedRooms.svelte';
-	import WaitingRoom from '$lib/room/components/WaitingRoom.svelte';
+	import WaitingRooms from '$lib/rooms/WaitingRooms.svelte';
+	import JoinedRooms from '$lib/rooms/JoinedRooms.svelte';
+	import WaitingRoom from '$lib/rooms/WaitingRoom.svelte';
 	import { user } from '$lib/session/user';
 	import { onMount, onDestroy } from 'svelte';
-	import { generateTitle } from '$lib/room/generateTitle';
-	import { rooms } from '$lib/room/stores';
+	import { generateTitle } from '$lib/rooms/generateTitle';
+	import { rooms } from '$lib/stores';
 	import type { IGunChainReference } from 'gun/types/chain';
 	export let Game;
 	export let game;

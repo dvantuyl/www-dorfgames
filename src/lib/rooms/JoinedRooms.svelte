@@ -1,7 +1,7 @@
 <script>
 	import { createEventDispatcher, onDestroy } from 'svelte';
-	import { rooms } from '$lib/room/stores';
-	import RoomItem from '$lib/room/components/RoomItem.svelte';
+	import { rooms } from '$lib/stores';
+	import RoomItem from '$lib/rooms/RoomItem.svelte';
 
 	export let game;
 	export let player;

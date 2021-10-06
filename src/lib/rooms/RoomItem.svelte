@@ -1,5 +1,5 @@
 <script>
-	import { rooms } from '$lib/room/stores';
+	import { rooms } from '$lib/stores';
 	import { onDestroy } from 'svelte';
 	export let key;
 	export let title;

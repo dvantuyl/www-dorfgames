@@ -1,5 +1,4 @@
 <script>
-	import { user } from '$lib/session/user';
 	import { createEventDispatcher } from 'svelte';
 	export let players = [];
 
