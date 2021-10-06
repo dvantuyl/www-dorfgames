@@ -14,9 +14,8 @@
 		dispatch('click', { room });
 	}
 
-	rooms.withPlayer(player, game, (playerRooms) => {
-		joinedRooms = Object.entries(playerRooms);
-		console.log('joinedRooms', playerRooms);
+	rooms.joined(player, game, (updatedRooms) => {
+		joinedRooms = Object.entries(updatedRooms);
 	});
 </script>
 

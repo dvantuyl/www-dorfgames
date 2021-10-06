@@ -7,23 +7,22 @@
 
 	export let game;
 	const dispatch = createEventDispatcher();
+	let waitingRooms = [];
 
 	function forwardClick(room) {
 		dispatch('click', { room });
 	}
 
-	const waitingRooms = derived(rooms, ($rooms) =>
-		_object.pickBy($rooms, (room) => room.stateIndex === 0 && room.game === game)
-	);
-
-	$: waitingRoomsList = Object.entries($waitingRooms);
+	rooms.waiting(game, (updatedRooms) => {
+		waitingRooms = Object.entries(updatedRooms);
+	});
 </script>
 
-{#if waitingRoomsList.length}
+{#if waitingRooms.length}
 	<div class="rounded bg-purple-100 p-4">
 		<h3 class="text-xl font-semibold mb-4">Waiting Rooms</h3>
 		<div class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-5 gap-4">
-			{#each waitingRoomsList as waitingRoom (waitingRoom[0])}
+			{#each waitingRooms as waitingRoom (waitingRoom[0])}
 				<RoomItem
 					key={waitingRoom[0]}
 					title={waitingRoom[1].title}
