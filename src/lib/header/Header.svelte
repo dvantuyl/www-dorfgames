@@ -34,7 +34,11 @@
 				rooms
 					.get(room)
 					.once((data) => (gameRoomBreadCrumb = { ...gameRoomBreadCrumb, roomTitle: data.title }));
+			} else {
+				delete gameRoomBreadCrumb['roomTitle'];
 			}
+		} else {
+			gameRoomBreadCrumb = null;
 		}
 	}
 </script>
