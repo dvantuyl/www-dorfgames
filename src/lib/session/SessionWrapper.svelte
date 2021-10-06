@@ -1,12 +1,12 @@
 <script>
-	import { user } from '$lib/session/user';
+	import { session } from '$lib/stores';
 	import Modal from '$lib/Modal.svelte';
 	import SignInForm from '$lib/session/SignInForm.svelte';
 
 	let isModalOpen = true;
 </script>
 
-{#if $user.alias}
+{#if $session.user.alias}
 	<slot />
 {:else}
 	<Modal

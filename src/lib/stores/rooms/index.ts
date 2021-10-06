@@ -1,6 +1,6 @@
-import type { User } from '$lib/session/user';
-import { db } from '$lib/session/user';
+import type { User } from '$lib/types';
 import type { IGunChainReference } from 'gun/types/chain';
+import { db } from '$lib/stores';
 import isEqual from 'lodash/isEqual.js';
 
 export type Room = {

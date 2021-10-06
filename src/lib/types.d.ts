@@ -5,3 +5,10 @@
 export interface Locals {
 	userid: string;
 }
+
+export type User = {
+	uuid: string;
+	alias: string;
+	createdAt: number;
+	loginAt: number;
+};

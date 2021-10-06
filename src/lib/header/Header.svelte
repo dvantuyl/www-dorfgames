@@ -1,11 +1,10 @@
 <script>
 	import { browser } from '$app/env';
-	import { user } from '$lib/session/user';
+	import { session, rooms } from '$lib/stores';
 	import Modal from '$lib/Modal.svelte';
 	import SignInForm from '$lib/session/SignInForm.svelte';
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
-	import { rooms } from '$lib/stores/rooms';
 
 	let isModalOpen = false;
 	let gameRoomBreadcrumb = {};
@@ -66,20 +65,20 @@
 
 	<div class="flex gap-2 divide-x-2 divide-green-500 items-center">
 		<div><a href="/games" class="font-semibold">Games</a></div>
-		{#if $user.alias}
+		{#if $session.user.alias}
 			<div class="flex items-center pl-2">
 				<button class="flex items-center">
 					<span on:click={() => (isModalOpen = true)} class="font-bold block mr-2"
-						>{$user.alias}</span
+						>{$session.user.alias}</span
 					>
 					<img
 						on:click={() => (isModalOpen = true)}
 						class="block w-10 mr-5"
-						src={`https://avatars.dicebear.com/api/initials/${$user.alias}.svg`}
+						src={`https://avatars.dicebear.com/api/initials/${$session.user.alias}.svg`}
 						alt="avatar"
 					/>
 				</button>
-				<button class="signout-button block font-semibold" on:click={() => user.signout()}>
+				<button class="signout-button block font-semibold" on:click={() => session.signout()}>
 					Sign Out
 				</button>
 			</div>

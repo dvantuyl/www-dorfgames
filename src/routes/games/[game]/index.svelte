@@ -37,7 +37,7 @@
 	import WaitingRooms from '$lib/rooms/WaitingRooms.svelte';
 	import JoinedRooms from '$lib/rooms/JoinedRooms.svelte';
 	import WaitingRoom from '$lib/rooms/WaitingRoom.svelte';
-	import { user } from '$lib/session/user';
+	import { session } from '$lib/stores';
 	import { onMount, onDestroy } from 'svelte';
 	import { generateTitle } from '$lib/rooms/generateTitle';
 	import { rooms } from '$lib/stores';
@@ -91,8 +91,8 @@
 	}
 
 	// Add User to room
-	$: if (roomRef && stateIndex === 0 && $user.alias) {
-		roomRef.addPlayer($user);
+	$: if (roomRef && stateIndex === 0 && $session.user.alias) {
+		roomRef.addPlayer($session.user);
 	}
 
 	function createGame() {
@@ -126,7 +126,7 @@
 			room={{
 				init: stateIndex === 1,
 				players,
-				sessionPlayer: $user,
+				sessionPlayer: $session.user,
 				publishState: roomRef.publishState
 			}}
 			{state}
@@ -141,7 +141,7 @@
 		<div class="px-5">
 			<button on:click={createGame}>Create Game</button>
 		</div>
-		<JoinedRooms on:click={enterRoom} {game} player={$user} />
+		<JoinedRooms on:click={enterRoom} {game} player={$session.user} />
 		<br />
 		<WaitingRooms on:click={enterRoom} {game} />
 	{/if}
