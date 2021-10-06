@@ -11,10 +11,11 @@ export type Room = {
 };
 
 function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
-	function joined(player: User, game: string, callback) {
+	function joined(player: User, game: string, callback): IGunChainReference<any, 'rooms', false> {
 		let $rooms: Record<string, Room> = {};
 
-		db.get(`users/${player.uuid}`)
+		return db
+			.get(`users/${player.uuid}`)
 			.get('rooms')
 			.map()
 			.on((room, key) => {
@@ -28,10 +29,10 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 			});
 	}
 
-	function waiting(game: string, callback) {
+	function waiting(game: string, callback): IGunChainReference<any, 'rooms', false> {
 		let $rooms: Record<string, Room> = {};
 
-		ref.map().on((room, key) => {
+		return ref.map().on((room, key) => {
 			if (room && room.game === game && room.stateIndex === 0) {
 				const updatedRooms = { ...$rooms, [key]: room };
 				if (!isEqual($rooms, updatedRooms)) {
@@ -51,9 +52,10 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 			userRef.get('rooms').set(roomRef);
 		}
 
-		function players(callback): void {
+		function players(callback): IGunChainReference<any, 'players', false> {
 			let currentPlayers: Record<string, User> = {};
-			roomRef
+
+			return roomRef
 				.get('players')
 				.map()
 				.on((data) => {
@@ -75,8 +77,8 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 			});
 		}
 
-		function subscribe(publish) {
-			roomRef.on((data) => {
+		function subscribe(publish): IGunChainReference<any, string, false> {
+			return roomRef.on((data) => {
 				if (data) {
 					publish(data);
 				}

@@ -37,9 +37,10 @@
 	import JoinedRooms from '$lib/room/components/JoinedRooms.svelte';
 	import WaitingRoom from '$lib/room/components/WaitingRoom.svelte';
 	import { user } from '$lib/session/user';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { generateTitle } from '$lib/room/generateTitle';
 	import { rooms } from '$lib/room/stores';
+	import type { IGunChainReference } from 'gun/types/chain';
 	export let Game;
 	export let game;
 	export let gameTitle;
@@ -47,9 +48,10 @@
 	let players = [];
 	let roomKey;
 	let stateIndex = 0;
-	let room;
+	let roomRef;
 	let state;
 	let roomTitle;
+	let subscriptions = new Set<IGunChainReference>();
 
 	onMount(() => {
 		const url = new URL(window.location.href);
@@ -58,22 +60,28 @@
 		}
 	});
 
+	onDestroy(() => {
+		subscriptions.forEach((ref) => ref.off());
+	});
+
 	$: if (roomKey) {
-		room = rooms.get(roomKey);
+		roomRef = rooms.get(roomKey);
 	}
 
-	$: if (room) {
-		room.subscribe((updatedRoom) => {
-			roomTitle = updatedRoom.title;
-			stateIndex = updatedRoom.stateIndex;
-			state = updatedRoom.state ? JSON.parse(updatedRoom.state) : {};
-		});
-		room.players((p) => (players = p));
+	$: if (roomRef) {
+		subscriptions.add(
+			roomRef.subscribe((updatedRoom) => {
+				roomTitle = updatedRoom.title;
+				stateIndex = updatedRoom.stateIndex;
+				state = updatedRoom.state ? JSON.parse(updatedRoom.state) : {};
+			})
+		);
+		subscriptions.add(roomRef.players((p) => (players = p)));
 	}
 
 	// Add User to room
-	$: if (room && stateIndex === 0 && $user.alias) {
-		room.addPlayer($user);
+	$: if (roomRef && stateIndex === 0 && $user.alias) {
+		roomRef.addPlayer($user);
 	}
 
 	function createGame() {
@@ -92,7 +100,7 @@
 	}
 
 	function handleStartGame() {
-		room.publishState({});
+		roomRef.publishState({});
 	}
 </script>
 
@@ -101,18 +109,18 @@
 </svelte:head>
 
 <SessionWrapper>
-	{#if room && stateIndex > 0}
+	{#if roomRef && stateIndex > 0}
 		<svelte:component
 			this={Game}
 			room={{
 				init: stateIndex === 1,
 				players,
 				sessionPlayer: $user,
-				publishState: room.publishState
+				publishState: roomRef.publishState
 			}}
 			{state}
 		/>
-	{:else if room && stateIndex === 0}
+	{:else if roomRef && stateIndex === 0}
 		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">
 			{gameTitle}<br />[{roomTitle}]
 		</h2>

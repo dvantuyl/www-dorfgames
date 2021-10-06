@@ -1,17 +1,16 @@
 <script>
 	import { rooms } from '$lib/room/stores';
+	import { onDestroy } from 'svelte';
 	export let key;
 	export let title;
 
 	let players = [];
 
-	$: room = rooms.get(key);
+	onDestroy(() => ref.off());
 
-	$: if (room) {
-		room.players((roomPlayers) => {
-			players = Object.values(roomPlayers);
-		});
-	}
+	const ref = rooms.get(key).players((roomPlayers) => {
+		players = Object.values(roomPlayers);
+	});
 </script>
 
 {#if players.length}

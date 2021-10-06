@@ -1,7 +1,5 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
-	import { derived } from 'svelte/store';
-	import _object from 'lodash/object.js';
+	import { createEventDispatcher, onDestroy } from 'svelte';
 	import { rooms } from '$lib/room/stores';
 	import RoomItem from '$lib/room/components/RoomItem.svelte';
 
@@ -10,11 +8,13 @@
 	const dispatch = createEventDispatcher();
 	let joinedRooms = [];
 
+	onDestroy(() => ref.off());
+
 	function forwardClick(room) {
 		dispatch('click', { room });
 	}
 
-	rooms.joined(player, game, (updatedRooms) => {
+	const ref = rooms.joined(player, game, (updatedRooms) => {
 		joinedRooms = Object.entries(updatedRooms);
 	});
 </script>
