@@ -1,8 +1,6 @@
 import type { User } from '$lib/session/user';
 import { db } from '$lib/session/user';
 import type { IGunChainReference } from 'gun/types/chain';
-import { writable } from 'svelte/store';
-import _object from 'lodash/object.js';
 import isEqual from 'lodash/isEqual.js';
 
 export type Room = {
@@ -13,20 +11,6 @@ export type Room = {
 };
 
 function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
-	const { subscribe, set, update } = writable({} as Record<string, Room>);
-
-	ref.map().on((data, key) => {
-		if (data && data.title) {
-			console.log('room', key, data);
-			update((rooms) => ({ ...rooms, [key]: data }));
-		} else {
-			update((rooms) => {
-				delete rooms[key];
-				return rooms;
-			});
-		}
-	});
-
 	function joined(player: User, game: string, callback) {
 		let $rooms: Record<string, Room> = {};
 
@@ -84,11 +68,10 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 		}
 
 		function publishState(nextState: Record<string, unknown>): void {
-			update((rooms) => {
-				const stateIndex = rooms[key].stateIndex + 1;
+			roomRef.once((room) => {
+				const stateIndex = room.stateIndex + 1;
 				const state = JSON.stringify(nextState);
 				roomRef.put({ state, stateIndex });
-				return rooms;
 			});
 		}
 
@@ -122,8 +105,7 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 		waiting,
 		joined,
 		create,
-		get,
-		subscribe
+		get
 	};
 }
 
