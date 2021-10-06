@@ -3,6 +3,7 @@
 	import { session, rooms } from '$lib/stores';
 	import Modal from '$lib/Modal.svelte';
 	import SignInForm from '$lib/session/SignInForm.svelte';
+	import SessionMenu from '$lib/session/SessionMenu.svelte';
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -12,15 +13,20 @@
 	$: showTitle = $page.path !== '/';
 
 	onMount(() => {
-		window.addEventListener('popstate', setBreadCrumbs);
+		window.addEventListener('popstate', handleLocationChange);
 		setBreadCrumbs();
 	});
 
 	onDestroy(() => {
 		if (browser) {
-			window.removeEventListener('popstate', setBreadCrumbs);
+			window.removeEventListener('popstate', handleLocationChange);
 		}
 	});
+
+	function handleLocationChange() {
+		isModalOpen = false;
+		setBreadCrumbs();
+	}
 
 	function setBreadCrumbs() {
 		const url = new URL(window.location.href);
@@ -73,20 +79,15 @@
 					>
 					<img
 						on:click={() => (isModalOpen = true)}
-						class="block w-10 mr-5"
+						class="block w-10"
 						src={`https://avatars.dicebear.com/api/initials/${$session.user}.svg`}
 						alt="avatar"
 					/>
 				</button>
-				<button class="signout-button block font-semibold" on:click={() => session.logout()}>
-					Sign Out
-				</button>
 			</div>
 		{:else}
 			<div class="pl-2">
-				<button class="signout-button block font-semibold" on:click={() => (isModalOpen = true)}>
-					Sign In
-				</button>
+				<button class="block font-semibold" on:click={() => (isModalOpen = true)}> Sign In </button>
 			</div>
 		{/if}
 	</div>
@@ -100,5 +101,9 @@
 	transition={{ y: -50, opacity: 0 }}
 	className="top-12 right-5 rounded-b-xl shadow-lg"
 >
-	<SignInForm bind:isModalOpen />
+	{#if $session.user}
+		<SessionMenu bind:isModalOpen />
+	{:else}
+		<SignInForm bind:isModalOpen />
+	{/if}
 </Modal>
