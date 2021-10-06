@@ -54,14 +54,20 @@
 	let subscriptions = new Set<IGunChainReference>();
 
 	onMount(() => {
-		const url = new URL(window.location.href);
-		if (url.hash) {
-			roomKey = url.hash.substring(1);
-		}
+		window.onpopstate = function (event) {
+			const url = new URL(window.location.href);
+			if (url.hash) {
+				roomKey = url.hash.substring(1);
+			} else {
+				roomKey = null;
+				roomRef = null;
+			}
+		};
 	});
 
 	onDestroy(() => {
 		subscriptions.forEach((ref) => ref.off());
+		window.onpopstate = null;
 	});
 
 	$: if (roomKey) {
@@ -89,14 +95,14 @@
 		const title = generateTitle();
 		roomKey = rooms.create(game, title);
 		url.hash = roomKey;
-		window.location.replace(url.href);
+		window.location.assign(url.href);
 	}
 
 	function enterRoom(event) {
 		const url = new URL(window.location.href);
 		roomKey = event.detail.room;
 		url.hash = roomKey;
-		window.location.replace(url.href);
+		window.location.assign(url.href);
 	}
 
 	function handleStartGame() {
