@@ -51,14 +51,14 @@
 			<h1 class="text-xl font-bold text-purple-900"><a href="/">Dorfgames</a></h1>
 		{/if}
 		{#if gameRoomBreadcrumb.game}
-			<i class="block text-xl font-bold text-gray-500 mx-2">navigate_next</i>
-			<h1 class="text-xl font-bold capitalize text-purple-900">
+			<i class="hidden md:block text-xl font-bold text-gray-500 mx-2">navigate_next</i>
+			<h1 class="hidden md:block text-xl font-bold capitalize text-purple-900">
 				<a rel="external" href="/games/{gameRoomBreadcrumb.game}">{gameRoomBreadcrumb.game}</a>
 			</h1>
 		{/if}
 		{#if gameRoomBreadcrumb.room && gameRoomBreadcrumb.roomTitle}
-			<i class="block text-xl font-bold text-gray-500 mx-2">navigate_next</i>
-			<h1 class="text-xl font-bold capitalize text-gray-600">
+			<i class="hidden md:block text-xl font-bold text-gray-500 mx-2">navigate_next</i>
+			<h1 class="hidden md:block text-xl font-bold capitalize text-gray-600">
 				{gameRoomBreadcrumb.roomTitle}
 			</h1>
 		{/if}
