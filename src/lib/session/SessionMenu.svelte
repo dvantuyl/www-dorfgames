@@ -7,8 +7,9 @@
 	let state = 'menu';
 
 	function handleLogout() {
-		session.logout();
+		isModalOpen = false;
 		window.location.assign('/');
+		session.logout();
 	}
 </script>
 
