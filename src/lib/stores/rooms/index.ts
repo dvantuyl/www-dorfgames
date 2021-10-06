@@ -82,10 +82,18 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 			});
 		}
 
-		function subscribe(publish): IGunChainReference<any, string, false> {
+		function subscribe(callback): IGunChainReference<any, string, false> {
 			return roomRef.on((data) => {
 				if (data) {
-					publish(data);
+					callback(data);
+				}
+			});
+		}
+
+		function once(callback): IGunChainReference<any, string, false> {
+			return roomRef.on((data) => {
+				if (data) {
+					callback(data);
 				}
 			});
 		}
@@ -94,7 +102,8 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 			addPlayer,
 			players,
 			publishState,
-			subscribe
+			subscribe,
+			once
 		};
 	};
 

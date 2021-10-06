@@ -1,18 +1,60 @@
 <script>
+	import { browser } from '$app/env';
 	import { user } from '$lib/session/user';
 	import Modal from '$lib/Modal.svelte';
 	import SignInForm from '$lib/session/SignInForm.svelte';
 	import { page } from '$app/stores';
+	import { onDestroy, onMount } from 'svelte';
+	import { rooms } from '$lib/stores/rooms';
 
 	let isModalOpen = false;
+	let gameRoomBreadCrumb = {};
 
 	$: showTitle = $page.path !== '/';
+
+	onMount(() => {
+		window.addEventListener('popstate', setBreadCrumbs);
+		setBreadCrumbs();
+	});
+
+	onDestroy(() => {
+		if (browser) {
+			window.removeEventListener('popstate', setBreadCrumbs);
+		}
+	});
+
+	function setBreadCrumbs() {
+		const url = new URL(window.location.href);
+		const pathItems = url.pathname.split('/').filter((i) => i.length);
+		const [namespace, ...rest] = [...pathItems, url.hash.substring(1)].filter((i) => i.length);
+		if (namespace === 'games') {
+			const [game, room] = rest;
+			gameRoomBreadCrumb = { game, room };
+			if (room) {
+				rooms
+					.get(room)
+					.once((data) => (gameRoomBreadCrumb = { ...gameRoomBreadCrumb, roomTitle: data.title }));
+			}
+		}
+	}
 </script>
 
 <div class="flex justify-between items-center h-full w-full">
-	<div class="flex items-bottom">
+	<div class="flex items-center">
 		{#if showTitle}
-			<h1 class="text-xl font-bold"><a href="/">Dorfgames</a></h1>
+			<h1 class="text-xl font-bold text-purple-900"><a href="/">Dorfgames</a></h1>
+		{/if}
+		{#if gameRoomBreadCrumb.game}
+			<i class="block text-xl font-bold text-gray-500 mx-2">navigate_next</i>
+			<h1 class="text-xl font-bold capitalize text-purple-900">
+				<a rel="external" href="/games/{gameRoomBreadCrumb.game}">{gameRoomBreadCrumb.game}</a>
+			</h1>
+		{/if}
+		{#if gameRoomBreadCrumb.roomTitle}
+			<i class="block text-xl font-bold text-gray-500 mx-2">navigate_next</i>
+			<h1 class="text-xl font-bold capitalize text-gray-600">
+				{gameRoomBreadCrumb.roomTitle}
+			</h1>
 		{/if}
 	</div>
 

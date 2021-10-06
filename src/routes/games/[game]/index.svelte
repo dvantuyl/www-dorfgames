@@ -32,6 +32,7 @@
 </script>
 
 <script lang="ts">
+	import { browser } from '$app/env';
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
 	import WaitingRooms from '$lib/rooms/WaitingRooms.svelte';
 	import JoinedRooms from '$lib/rooms/JoinedRooms.svelte';
@@ -54,21 +55,25 @@
 	let subscriptions = new Set<IGunChainReference>();
 
 	onMount(() => {
-		window.onpopstate = function (event) {
-			const url = new URL(window.location.href);
-			if (url.hash) {
-				roomKey = url.hash.substring(1);
-			} else {
-				roomKey = null;
-				roomRef = null;
-			}
-		};
+		window.addEventListener('popstate', handleLocationChange);
 	});
 
 	onDestroy(() => {
 		subscriptions.forEach((ref) => ref.off());
-		window.onpopstate = null;
+		if (browser) {
+			window.removeEventListener('popstate', handleLocationChange);
+		}
 	});
+
+	function handleLocationChange() {
+		const url = new URL(window.location.href);
+		if (url.hash) {
+			roomKey = url.hash.substring(1);
+		} else {
+			roomKey = null;
+			roomRef = null;
+		}
+	}
 
 	$: if (roomKey) {
 		roomRef = rooms.get(roomKey);
@@ -128,7 +133,7 @@
 		/>
 	{:else if roomRef && stateIndex === 0}
 		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">
-			{gameTitle}<br />{roomTitle || roomKey}
+			{roomTitle || roomKey}
 		</h2>
 		<WaitingRoom {players} on:startGame={handleStartGame} />
 	{:else}

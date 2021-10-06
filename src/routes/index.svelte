@@ -1,7 +1,3 @@
-<script>
-	export let games = [];
-</script>
-
 <svelte:head>
 	<title>Dorfgames</title>
 </svelte:head>
