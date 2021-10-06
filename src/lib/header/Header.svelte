@@ -8,7 +8,7 @@
 	import { rooms } from '$lib/stores/rooms';
 
 	let isModalOpen = false;
-	let gameRoomBreadCrumb = {};
+	let gameRoomBreadcrumb = {};
 
 	$: showTitle = $page.path !== '/';
 
@@ -27,18 +27,20 @@
 		const url = new URL(window.location.href);
 		const pathItems = url.pathname.split('/').filter((i) => i.length);
 		const [namespace, ...rest] = [...pathItems, url.hash.substring(1)].filter((i) => i.length);
+
+		// Set Games Breadcrumbs
 		if (namespace === 'games') {
 			const [game, room] = rest;
 			if (game && room) {
-				gameRoomBreadCrumb = { game, room };
+				gameRoomBreadcrumb = { game, room };
 				rooms
 					.get(room)
-					.once((data) => (gameRoomBreadCrumb = { ...gameRoomBreadCrumb, roomTitle: data.title }));
+					.once((data) => (gameRoomBreadcrumb = { ...gameRoomBreadcrumb, roomTitle: data.title }));
 			} else if (game) {
-				gameRoomBreadCrumb = { game };
+				gameRoomBreadcrumb = { game };
 			}
 		} else {
-			gameRoomBreadCrumb = {};
+			gameRoomBreadcrumb = {};
 		}
 	}
 </script>
@@ -48,16 +50,16 @@
 		{#if showTitle}
 			<h1 class="text-xl font-bold text-purple-900"><a href="/">Dorfgames</a></h1>
 		{/if}
-		{#if gameRoomBreadCrumb.game}
+		{#if gameRoomBreadcrumb.game}
 			<i class="block text-xl font-bold text-gray-500 mx-2">navigate_next</i>
 			<h1 class="text-xl font-bold capitalize text-purple-900">
-				<a rel="external" href="/games/{gameRoomBreadCrumb.game}">{gameRoomBreadCrumb.game}</a>
+				<a rel="external" href="/games/{gameRoomBreadcrumb.game}">{gameRoomBreadcrumb.game}</a>
 			</h1>
 		{/if}
-		{#if gameRoomBreadCrumb.room && gameRoomBreadCrumb.roomTitle}
+		{#if gameRoomBreadcrumb.room && gameRoomBreadcrumb.roomTitle}
 			<i class="block text-xl font-bold text-gray-500 mx-2">navigate_next</i>
 			<h1 class="text-xl font-bold capitalize text-gray-600">
-				{gameRoomBreadCrumb.roomTitle}
+				{gameRoomBreadcrumb.roomTitle}
 			</h1>
 		{/if}
 	</div>
