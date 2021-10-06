@@ -19,6 +19,7 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 			.get('rooms')
 			.map()
 			.on((room, key) => {
+				// db.get(`users/${player.uuid}`).get('rooms').get(key).put(null); // DELETE ALL JOINED ROOMS
 				if (room && room.game === game) {
 					const updatedRooms = { ...$rooms, [key]: room };
 					if (!isEqual($rooms, updatedRooms)) {
@@ -33,12 +34,16 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 		let $rooms: Record<string, Room> = {};
 
 		return ref.map().on((room, key) => {
+			// ref.get(key).put(null); // DELETE ALL ROOMS
 			if (room && room.game === game && room.stateIndex === 0) {
 				const updatedRooms = { ...$rooms, [key]: room };
 				if (!isEqual($rooms, updatedRooms)) {
 					$rooms = updatedRooms;
 					callback($rooms);
 				}
+			} else if (room && room.game && key in $rooms) {
+				delete $rooms[key];
+				callback($rooms);
 			}
 		});
 	}

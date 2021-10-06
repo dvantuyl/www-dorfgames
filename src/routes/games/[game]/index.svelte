@@ -122,7 +122,7 @@
 		/>
 	{:else if roomRef && stateIndex === 0}
 		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">
-			{gameTitle}<br />[{roomTitle}]
+			{gameTitle}<br />{roomTitle || roomKey}
 		</h2>
 		<WaitingRoom {players} on:startGame={handleStartGame} />
 	{:else}
