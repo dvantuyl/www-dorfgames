@@ -29,16 +29,16 @@
 		const [namespace, ...rest] = [...pathItems, url.hash.substring(1)].filter((i) => i.length);
 		if (namespace === 'games') {
 			const [game, room] = rest;
-			gameRoomBreadCrumb = { game, room };
-			if (room) {
+			if (game && room) {
+				gameRoomBreadCrumb = { game, room };
 				rooms
 					.get(room)
 					.once((data) => (gameRoomBreadCrumb = { ...gameRoomBreadCrumb, roomTitle: data.title }));
-			} else {
-				delete gameRoomBreadCrumb['roomTitle'];
+			} else if (game) {
+				gameRoomBreadCrumb = { game };
 			}
 		} else {
-			gameRoomBreadCrumb = null;
+			gameRoomBreadCrumb = {};
 		}
 	}
 </script>
@@ -54,7 +54,7 @@
 				<a rel="external" href="/games/{gameRoomBreadCrumb.game}">{gameRoomBreadCrumb.game}</a>
 			</h1>
 		{/if}
-		{#if gameRoomBreadCrumb.roomTitle}
+		{#if gameRoomBreadCrumb.room && gameRoomBreadCrumb.roomTitle}
 			<i class="block text-xl font-bold text-gray-500 mx-2">navigate_next</i>
 			<h1 class="text-xl font-bold capitalize text-gray-600">
 				{gameRoomBreadCrumb.roomTitle}
