@@ -5,6 +5,7 @@
 	export let isModalOpen;
 
 	let alias = '';
+	let inputField;
 
 	$: label = $session.user ? 'Change Name' : `Hi ${alias}!`;
 	$: buttonText = $session.user ? 'Party!' : "Let's Go!";
@@ -13,6 +14,7 @@
 		if ($session.user) {
 			alias = $session.user.alias;
 		}
+		inputField.focus();
 	});
 
 	function letsGo() {
@@ -34,6 +36,7 @@
 		maxlength="16"
 		placeholder="My Name is..."
 		on:keydown={handleKeyDown}
+		bind:this={inputField}
 	/>
 
 	<button class:opacity-0={alias.length < 3} on:click={letsGo}>{buttonText}</button>

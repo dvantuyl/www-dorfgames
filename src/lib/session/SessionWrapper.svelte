@@ -3,23 +3,12 @@
 	import Modal from '$lib/Modal.svelte';
 	import SignInForm from '$lib/session/SignInForm.svelte';
 
-	let isModalOpen = false;
-	let showSignInForm = false;
-
-	$: if (!$session.user) {
-		isModalOpen = true;
-		setTimeout(function () {
-			showSignInForm = true;
-		}, 500);
-	} else {
-		isModalOpen = false;
-		showSignInForm = false;
-	}
+	let isModalOpen = true;
 </script>
 
 {#if $session.user}
 	<slot />
-{:else if showSignInForm}
+{:else}
 	<Modal
 		bind:isModalOpen
 		background={false}
