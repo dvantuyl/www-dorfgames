@@ -1,47 +1,46 @@
-<script context="module">
+<script context="module" lang="ts">
 	export async function load({ page, fetch }) {
 		try {
-			const Game = await import(`../../../games/${page.params.game}/Game.svelte`);
-			const res = await fetch('/games.json');
-
-			if (res.ok) {
-				const gameMap = await res.json();
-				const game = page.params.game;
-				const gameTitle = gameMap[game];
-
-				return {
-					props: {
-						Game: Game.default,
-						game,
-						gameTitle
-					}
-				};
-			}
-
-			return {
-				status: res.status,
-				error: new Error('Could not load /games.json')
-			};
+			const Game = (await import(`../../../games/${page.params.game}/Game.svelte`)).default;
+			const game = page.params.game;
+			const gameMap = await gamesMapLoader(fetch);
+			const gameTitle = gameMap[game];
+			const props = { Game, game, gameTitle };
+			return { props };
 		} catch (e) {
 			return {
 				status: 404,
-				error: `Game.svelte not found in '/src/games/${page.params.game}'`
+				error: e
 			};
+		}
+	}
+
+	async function gamesMapLoader(
+		fetch: (info: RequestInfo) => Promise<Response>
+	): Promise<Record<string, string>> {
+		const res = await fetch('/games.json');
+
+		if (res.ok) {
+			return await res.json();
+		} else {
+			throw Error('#gamesMapLoader: Could not load /games.json');
 		}
 	}
 </script>
 
 <script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
+	import type { IGunChainReference } from 'gun/types/chain';
 	import { browser } from '$app/env';
+	import { session } from '$lib/stores';
+	import { generateTitle } from '$lib/rooms/generateTitle';
+	import { rooms } from '$lib/stores';
+
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
 	import WaitingRooms from '$lib/rooms/WaitingRooms.svelte';
 	import JoinedRooms from '$lib/rooms/JoinedRooms.svelte';
 	import WaitingRoom from '$lib/rooms/WaitingRoom.svelte';
-	import { session } from '$lib/stores';
-	import { onMount, onDestroy } from 'svelte';
-	import { generateTitle } from '$lib/rooms/generateTitle';
-	import { rooms } from '$lib/stores';
-	import type { IGunChainReference } from 'gun/types/chain';
+
 	export let Game;
 	export let game;
 	export let gameTitle;
