@@ -41,15 +41,15 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 					$rooms = updatedRooms;
 					callback($rooms);
 				}
-			} else if (room && room.game && key in $rooms) {
+			} else if (key in $rooms) {
 				delete $rooms[key];
 				callback($rooms);
 			}
 		});
 	}
 
-	const get = (key: string) => {
-		const roomRef = ref.get(key);
+	const get = (roomKey: string) => {
+		const roomRef = ref.get(roomKey);
 
 		function join(): void {
 			roomRef.get('players').set(session.userRef());
@@ -62,9 +62,9 @@ function createRoomsStore(ref: IGunChainReference<any, 'rooms', false>) {
 			return roomRef
 				.get('players')
 				.map()
-				.on((data) => {
+				.on((data, userId) => {
 					if (data && data.alias) {
-						const updatedPlayers = { ...currentPlayers, [data.uuid]: data };
+						const updatedPlayers = { ...currentPlayers, [userId]: data };
 						if (!isEqual(currentPlayers, updatedPlayers)) {
 							currentPlayers = updatedPlayers;
 							callback(Object.values(currentPlayers));

@@ -5,7 +5,7 @@ import { pick } from 'lodash';
 import type { IGunChainReference } from 'gun/types/chain';
 import { browser } from '$app/env';
 
-function createSessionStore() {
+function createSessionStore(ref: IGunChainReference<any, 'users', 'root'>) {
 	const { subscribe, set, update } = writable({} as Session);
 	let $userRef: IGunChainReference<any, 'users', 'root'>;
 
@@ -15,14 +15,14 @@ function createSessionStore() {
 			const loginAt = Date.now();
 			userRef().put({ ...user, loginAt });
 		});
-		initUserRefSubscription(userRef());
+		initUserRefSubscription();
 	}
 
 	function userRef() {
 		if ($userRef) {
 			return $userRef;
 		} else if (localStorageUserId()) {
-			$userRef = db.get('users').get(localStorageUserId());
+			$userRef = ref.get(localStorageUserId());
 			return $userRef;
 		} else {
 			return null;
@@ -42,14 +42,15 @@ function createSessionStore() {
 		if (browser) {
 			const key = 'userId';
 			const loginAt = Date.now();
-			$userRef = db.get('users').set({ alias, createdAt: loginAt, loginAt });
-			localStorage.setItem(key, JSON.stringify($userRef._.get));
-			initUserRefSubscription($userRef);
+			$userRef = ref.set({ alias, createdAt: loginAt, loginAt });
+			const uuid = $userRef._.get;
+			localStorage.setItem(key, JSON.stringify(uuid));
+			initUserRefSubscription();
 		}
 	}
 
-	function initUserRefSubscription(ref) {
-		ref.on(function (data, uuid) {
+	function initUserRefSubscription() {
+		userRef().on(function (data, uuid) {
 			const user = { ...pick(data, ['alias', 'createdAt', 'loginAt']), uuid };
 			update((session) => {
 				return { ...session, user };
@@ -84,4 +85,5 @@ function createSessionStore() {
 	};
 }
 
-export const session = createSessionStore();
+const ref = db.get('users');
+export const session = createSessionStore(ref);
