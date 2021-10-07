@@ -16,3 +16,10 @@ export type User = {
 export type Session = {
 	user?: User;
 };
+
+export type Room = {
+	game: string;
+	title: string;
+	stateIndex: number;
+	state: string;
+};
