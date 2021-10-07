@@ -1,7 +1,7 @@
 import type { Session } from '$lib/types';
 import { writable } from 'svelte/store';
 import { db } from './db';
-import { pick } from 'lodash';
+import pick from 'lodash/pick.js';
 import type { IGunChainReference } from 'gun/types/chain';
 import { browser } from '$app/env';
 

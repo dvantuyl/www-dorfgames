@@ -40,6 +40,7 @@
 	import WaitingRooms from '$lib/rooms/WaitingRooms.svelte';
 	import JoinedRooms from '$lib/rooms/JoinedRooms.svelte';
 	import WaitingRoom from '$lib/rooms/WaitingRoom.svelte';
+	import Button from '$lib/Button.svelte';
 
 	export let Game;
 	export let game;
@@ -138,7 +139,7 @@
 	{:else}
 		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">{gameTitle}</h2>
 		<div class="px-5">
-			<button on:click={createGame}>Create Game</button>
+			<Button on:click={createGame}>Create Game</Button>
 		</div>
 		<JoinedRooms on:click={enterRoom} {game} />
 		<br />

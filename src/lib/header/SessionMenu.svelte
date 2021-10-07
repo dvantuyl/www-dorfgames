@@ -1,6 +1,6 @@
 <script>
 	import { session } from '$lib/stores';
-	import SignInForm from '$lib/session/SignInForm.svelte';
+	import SignInForm from '$lib/header/SignInForm.svelte';
 
 	export let isModalOpen;
 
