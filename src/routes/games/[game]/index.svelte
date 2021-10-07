@@ -36,6 +36,7 @@
 	import { generateTitle } from '$lib/rooms/generateTitle';
 	import { rooms } from '$lib/stores';
 
+	import Header from '$lib/header/Header.svelte';
 	import SessionWrapper from '$lib/session/SessionWrapper.svelte';
 	import WaitingRooms from '$lib/rooms/WaitingRooms.svelte';
 	import JoinedRooms from '$lib/rooms/JoinedRooms.svelte';
@@ -121,28 +122,49 @@
 
 <SessionWrapper>
 	{#if roomStore && stateIndex > 0}
-		<svelte:component
-			this={Game}
-			room={{
-				init: stateIndex === 1,
-				players,
-				sessionPlayer: $session.user,
-				publishState: roomStore.publishState
-			}}
-			{state}
-		/>
-	{:else if roomStore && stateIndex === 0}
-		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">
-			{roomTitle || roomKey}
-		</h2>
-		<WaitingRoom {players} on:startGame={handleStartGame} />
-	{:else}
-		<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">{gameTitle}</h2>
-		<div class="px-5">
-			<Button on:click={createGame}>Create Game</Button>
+		<div class="w-screen h-screen overflow-hidden flex flex-col">
+			<header class="h-16 px-5 flex-none">
+				<Header />
+			</header>
+			<main class="flex-grow">
+				<svelte:component
+					this={Game}
+					room={{
+						init: stateIndex === 1,
+						players,
+						sessionPlayer: $session.user,
+						publishState: roomStore.publishState
+					}}
+					{state}
+				/>
+			</main>
 		</div>
-		<JoinedRooms on:click={enterRoom} {game} />
-		<br />
-		<WaitingRooms on:click={enterRoom} {game} />
+	{:else if roomStore && stateIndex === 0}
+		<div class="w-full min-h-screen overflow-x-hidden flex flex-col">
+			<header class="h-16 px-5 flex-none">
+				<Header />
+			</header>
+			<main class="w-full px-5">
+				<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">
+					{roomTitle || roomKey}
+				</h2>
+				<WaitingRoom {players} on:startGame={handleStartGame} />
+			</main>
+		</div>
+	{:else}
+		<div class="w-full min-h-screen overflow-x-hidden">
+			<header class="h-16 px-5 w-full">
+				<Header />
+			</header>
+			<main class="w-full px-5">
+				<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">{gameTitle}</h2>
+				<div class="mb-5">
+					<Button on:click={createGame}>Create Game</Button>
+				</div>
+				<JoinedRooms on:click={enterRoom} {game} />
+				<br />
+				<WaitingRooms on:click={enterRoom} {game} />
+			</main>
+		</div>
 	{/if}
 </SessionWrapper>
