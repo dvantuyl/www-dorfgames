@@ -1,4 +1,5 @@
-import type { Room, User } from '$lib/types';
+import pick from 'lodash/pick.js';
+import type { Room, Users } from '$lib/types';
 import type { IGunChainReference } from 'gun/types/chain';
 import isEqual from 'lodash/isEqual.js';
 import { db, session } from '$lib/stores';
@@ -12,7 +13,7 @@ function createRoomStore(ref: IGunChainReference<any, 'rooms', false>) {
 		return {
 			join: () => join(roomRef),
 			once: (callback: (room: Room) => void) => once(roomRef, callback),
-			players: (callback: (players: User[]) => void) => players(roomRef, callback),
+			players: (callback: (players: Users) => void) => players(roomRef, callback),
 			publishState: (nextState: Record<string, unknown>) => publishState(roomRef, nextState),
 			subscribe: (callback: (room: Room) => void) => subscribe(roomRef, callback)
 		};
@@ -37,19 +38,19 @@ function once(
 
 function players(
 	roomRef: RoomRef,
-	callback: (players: User[]) => void
+	callback: (players: Users) => void
 ): IGunChainReference<any, 'players', false> {
-	let currentPlayers: Record<string, User> = {};
+	let currentPlayers: Users = {};
 
 	return roomRef
 		.get('players')
 		.map()
 		.on((data, userId) => {
 			if (data && data.alias) {
-				const updatedPlayers = { ...currentPlayers, [userId]: data };
+				const updatedPlayers = { ...currentPlayers, [userId]: pick(data, ['uuid', 'alias']) };
 				if (!isEqual(currentPlayers, updatedPlayers)) {
 					currentPlayers = updatedPlayers;
-					callback(Object.values(currentPlayers));
+					callback(currentPlayers);
 				}
 			}
 		});

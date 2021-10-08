@@ -1,17 +1,18 @@
 import { createMachine } from 'xstate';
-import type { GameState, GameEvent } from '../../types';
+import type { GameEvent, GameCtx } from '../../types';
 import { actions } from './actions';
 
-export const gameMachine = createMachine<Record<'game', GameState>, GameEvent>(
+export const gameMachine = createMachine<GameCtx, GameEvent>(
 	{
 		id: 'gameMachine',
 		initial: 'initializing',
 		context: {
+			local: {
+				sessionPlayerId: null
+			},
 			game: {
-				players: {
-					currentPlayerIndex: 0,
-					list: []
-				},
+				currentPlayerIndex: 0,
+				players: {},
 				tokens: {
 					bk: 0,
 					wh: 0,

@@ -1,5 +1,7 @@
 import { assign } from 'xstate';
-import type { GameState, GameEvent, Players, Tokens, User, GameCtx } from '../../types';
+import reduce from 'lodash/reduce.js';
+import shuffle from 'lodash/shuffle.js';
+import type { GameState, GameEvent, Players, Tokens, GameCtx, Users } from '../../types';
 
 export const actions = {
 	setup: assign({
@@ -20,31 +22,40 @@ export const actions = {
 	}
 };
 
-export function setupGame(users: User[]): GameState {
+export function setupGame(users: Users): GameState {
 	return {
+		currentPlayerIndex: 0,
 		players: setupPlayers(users),
 		tokens: setupTokens(users.length)
 	};
 }
 
-function setupPlayers(users): Players {
-	const currentPlayerIndex = 0;
-	const list = users.map((user) => {
-		return {
-			id: user.uuid,
-			name: user.alias,
-			tokens: {
-				bk: 0,
-				wh: 0,
-				re: 0,
-				bl: 0,
-				gr: 0,
-				go: 0
-			}
-		};
-	});
-
-	return { currentPlayerIndex, list };
+function setupPlayers(users: Users): Players {
+	let index = 0;
+	return reduce(
+		shuffle(users),
+		function (result, user, id) {
+			const players = {
+				...result,
+				[id]: {
+					index,
+					id,
+					name: user.alias,
+					tokens: {
+						bk: 0,
+						wh: 0,
+						re: 0,
+						bl: 0,
+						gr: 0,
+						go: 0
+					}
+				}
+			};
+			index++;
+			return players;
+		},
+		[]
+	);
 }
 
 function setupTokens(numPlayers): Tokens {

@@ -13,7 +13,7 @@ export function waiting(
 		.get('rooms')
 		.map()
 		.on((room, key) => {
-			// ref.get(key).put(null); // DELETE ALL ROOMS
+			// db.get('rooms').get(key).put(null); // DELETE ALL ROOMS
 			if (room && room.game === game && room.stateIndex === 0) {
 				const updatedRooms = { ...$rooms, [key]: room };
 				if (!isEqual($rooms, updatedRooms)) {

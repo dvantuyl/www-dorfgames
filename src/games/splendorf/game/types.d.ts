@@ -1,27 +1,28 @@
-import type { User } from '$lib/types';
 export * from '$lib/types';
 
 export interface GameCtx {
 	game: GameState;
+	local: {
+		sessionPlayerId: string;
+	};
 }
 
 export interface GameState {
+	currentPlayerIndex: number;
 	players: Players;
 	tokens: Tokens;
 }
 
 export type GameEvent =
-	| { type: 'SETUP'; users: User[] }
+	| { type: 'SETUP'; users: Users }
 	| { type: 'READ'; game: GameState }
 	| { type: 'PUBLISH'; callback: (game: GameState) => void };
 
-export type Players = {
-	currentPlayerIndex: number;
-	list: Player[];
-};
+export type Players = Record<string, Player>;
 export type Tokens = { [K in ColorType]: number };
 
 export type Player = {
+	index: number;
 	id: string;
 	name: string;
 	tokens: { [K in ColorType]: number };

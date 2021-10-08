@@ -47,7 +47,7 @@
 	export let game;
 	export let gameTitle;
 
-	let players = [];
+	let players = {};
 	let roomKey;
 	let stateIndex = 0;
 	let roomStore;
@@ -113,6 +113,7 @@
 
 	function handleStartGame() {
 		roomStore.publishState({});
+		//TODO Randomize player order
 	}
 </script>
 

@@ -13,6 +13,8 @@ export type User = {
 	loginAt: number;
 };
 
+export type Users = Record<string, User>;
+
 export type Session = {
 	user?: User;
 };
