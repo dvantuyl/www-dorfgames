@@ -1,25 +1,29 @@
 <script>
-	import { setupState, readState, writeState, nextPlayerIndex as nextPlayerIndexFn } from './game';
+	import { writeState, nextPlayerIndex as nextPlayerIndexFn } from './game';
 	import { players as playersStore } from './game/stores/players';
 	import { tokens as tokensStore } from './game/stores/tokens';
 	import Board from './board/Board.svelte';
+	import { interpret } from 'xstate';
+	import { gameMachine } from './game/state/gameMachine';
+	const gameService = interpret(gameMachine).start();
 
 	export let room;
 	export let state;
 
 	$: {
 		if (room.init) {
-			state = setupState(room.players);
-			room.publishState(state);
+			gameService.send('SETUP', { users: room.users });
+			gameService.send('PUBLISH', { callback: room.publishState });
 		} else {
-			readState(state);
+			gameService.send('READ', { game: state });
 		}
 	}
 
-	$: players = $playersStore.list;
-	$: currentPlayerIndex = $playersStore.currentPlayerIndex;
+	$: gameState = $gameService.context.game;
+	$: players = gameState.players.list;
+	$: currentPlayerIndex = gameState.players.currentPlayerIndex;
 	$: nextPlayerIndex = nextPlayerIndexFn(currentPlayerIndex, players.length);
-	$: tokens = $tokensStore;
+	$: tokens = gameState.tokens;
 
 	function takeToken(event) {
 		const color = event.detail.color;
@@ -30,8 +34,8 @@
 	function handleAction(event) {
 		switch (event.detail.value) {
 			case 'endTurn':
-				state = writeState(nextPlayerIndex, players, tokens);
-				room.publishState(state);
+				const gameState = writeState(nextPlayerIndex, players, tokens);
+				gameService.send('PUBLISH', { callback: gameState });
 				break;
 		}
 	}

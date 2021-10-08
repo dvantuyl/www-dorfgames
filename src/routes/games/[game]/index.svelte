@@ -131,7 +131,7 @@
 					this={Game}
 					room={{
 						init: stateIndex === 1,
-						players,
+						users: players,
 						sessionPlayer: $session.user,
 						publishState: roomStore.publishState
 					}}
