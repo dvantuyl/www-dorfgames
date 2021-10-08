@@ -4,12 +4,12 @@
 	export let key;
 	export let title;
 
-	let players = [];
+	let users = [];
 
 	onDestroy(() => ref.off());
 
-	const ref = rooms.get(key).players((roomPlayers) => {
-		players = Object.values(roomPlayers);
+	const ref = rooms.get(key).users((roomUsers) => {
+		users = Object.values(roomUsers);
 	});
 </script>
 
@@ -17,10 +17,10 @@
 	<h4 class="text-lg font-bold text-center capitalize mb-2 text-purple-900">
 		{title ? title : key}
 	</h4>
-	{#if players.length}
+	{#if users.length}
 		<div class="bg-purple-200 rounded p-2 h-full">
-			{#each players as player}
-				<span class="text-lg block text-purple-900 font-medium">{player.alias}</span>
+			{#each users as user}
+				<span class="text-lg block text-purple-900 font-medium">{user.alias}</span>
 			{/each}
 		</div>
 	{/if}

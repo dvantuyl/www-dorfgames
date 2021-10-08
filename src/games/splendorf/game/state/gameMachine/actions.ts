@@ -1,7 +1,15 @@
 import { assign } from 'xstate';
 import reduce from 'lodash/reduce.js';
 import shuffle from 'lodash/shuffle.js';
-import type { GameState, GameEvent, Players, Tokens, GameCtx, Users } from '../../types';
+import type {
+	GameState,
+	GameEvent,
+	Players,
+	Tokens,
+	GameCtx,
+	Users,
+	LocalState
+} from '../../types';
 
 export const actions = {
 	setup: assign({
@@ -16,14 +24,13 @@ export const actions = {
 			return event.game;
 		}
 	}),
+	takeToken: assign({
+		game: takeToken,
+		local: takeTokenEscrow
+	}),
 	endTurn: assign({
-		game: (context: GameCtx) => {
-			const currentPlayerIndex = context.game.currentPlayerIndex;
-			const numPlayers = Object.values(context.game.players).length;
-			const nextPlayerIndex = currentPlayerIndex === numPlayers - 1 ? 0 : currentPlayerIndex + 1;
-			return { ...context.game, currentPlayerIndex: nextPlayerIndex };
-		}
-		// return currentPlayerIndex === numPlayers - 1 ? 0 : currentPlayerIndex + 1;
+		game: setNextPlayerIndex,
+		local: clearEscrow
 	}),
 	publish: (context: GameCtx, event: GameEvent): void => {
 		if (event.type !== 'PUBLISH') return;
@@ -40,15 +47,15 @@ export function setupGame(users: Users): GameState {
 }
 
 function setupPlayers(users: Users): Players {
-	let index = 0;
 	return reduce(
 		shuffle(users),
-		function (result, user, id) {
+		function (result, user, index) {
+			console.log('setupPlayer', result, user, index);
 			const players = {
 				...result,
-				[id]: {
+				[user.id]: {
 					index,
-					id,
+					id: user.id,
 					name: user.alias,
 					tokens: {
 						bk: 0,
@@ -60,7 +67,6 @@ function setupPlayers(users: Users): Players {
 					}
 				}
 			};
-			index++;
 			return players;
 		},
 		[]
@@ -87,4 +93,44 @@ function numTokens(numPlayers: number): number {
 		default:
 			return 7;
 	}
+}
+
+function setNextPlayerIndex(context: GameCtx): GameState {
+	const currentPlayerIndex = context.game.currentPlayerIndex;
+	const numPlayers = Object.values(context.game.players).length;
+	const nextPlayerIndex = currentPlayerIndex === numPlayers - 1 ? 0 : currentPlayerIndex + 1;
+	return { ...context.game, currentPlayerIndex: nextPlayerIndex };
+}
+
+function clearEscrow(context: GameCtx): LocalState {
+	return {
+		...context.local,
+		escrow: {
+			tokens: {
+				bk: 0,
+				wh: 0,
+				re: 0,
+				bl: 0,
+				gr: 0,
+				go: 0
+			}
+		}
+	};
+}
+
+function takeToken(context: GameCtx, event: GameEvent): GameState {
+	if (event.type !== 'TAKE_TOKEN') return;
+	const sessionPlayerId = context.local.sessionPlayerId;
+	const players = context.game.players;
+	const tokens = context.game.tokens;
+	players[sessionPlayerId].tokens[event.color]++;
+	tokens[event.color]--;
+	return { ...context.game, players, tokens };
+}
+
+function takeTokenEscrow(context: GameCtx, event: GameEvent): LocalState {
+	if (event.type !== 'TAKE_TOKEN') return;
+	const escrow = context.local.escrow;
+	escrow.tokens[event.color]++;
+	return { ...context.local, escrow };
 }

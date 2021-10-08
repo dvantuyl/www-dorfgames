@@ -47,7 +47,7 @@
 	export let game;
 	export let gameTitle;
 
-	let players = {};
+	let users = {};
 	let roomKey;
 	let stateIndex = 0;
 	let roomStore;
@@ -88,7 +88,7 @@
 				state = updatedRoom.state ? JSON.parse(updatedRoom.state) : {};
 			})
 		);
-		subscriptions.add(roomStore.players((p) => (players = p)));
+		subscriptions.add(roomStore.users((u) => (users = u)));
 	}
 
 	// Add User to room
@@ -113,7 +113,6 @@
 
 	function handleStartGame() {
 		roomStore.publishState({});
-		//TODO Randomize player order
 	}
 </script>
 
@@ -130,10 +129,10 @@
 			<main class="flex-grow">
 				<svelte:component
 					this={Game}
+					setup="{stateIndex === 1},"
 					room={{
-						init: stateIndex === 1,
-						users: players,
-						sessionPlayer: $session.user,
+						users,
+						sessionUser: $session.user,
 						publishState: roomStore.publishState
 					}}
 					{state}
@@ -149,7 +148,7 @@
 				<h2 class="mb-5 text-3xl text-purple-900 font-bold text-center capitalize">
 					{roomTitle || roomKey}
 				</h2>
-				<WaitingRoom {players} on:startGame={handleStartGame} />
+				<WaitingRoom {users} on:startGame={handleStartGame} />
 			</main>
 		</div>
 	{:else}

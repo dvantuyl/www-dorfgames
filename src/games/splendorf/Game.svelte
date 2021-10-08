@@ -1,23 +1,25 @@
 <script>
-	import { writeState, nextPlayerIndex as nextPlayerIndexFn } from './game';
-	import { players as playersStore } from './game/stores/players';
-	import { tokens as tokensStore } from './game/stores/tokens';
 	import Board from './board/Board.svelte';
 	import { interpret } from 'xstate';
-	import { gameMachine } from './game/state';
-	import ActionSection from './board/sections/ActionSection.svelte';
-	import Breadcrumbs from '$lib/header/Breadcrumbs.svelte';
-	const gameService = interpret(gameMachine).start();
+	import { createGameMachine } from './game/state';
 
 	export let room;
 	export let state;
+	export let setup;
 
-	$: {
-		if (room.init) {
+	let gameService;
+
+	$: if (room && room.sessionUser) {
+		const gameMachine = createGameMachine(room.sessionUser.id);
+		gameService = interpret(gameMachine).start();
+	}
+
+	$: if (gameService) {
+		if (setup) {
 			gameService.send('SETUP', { users: room.users });
 			gameService.send('PUBLISH', { callback: room.publishState });
 		} else {
-			gameService.send('READ', { game: state, sessionPlayerId: room.sessionPlayer.uuid });
+			gameService.send('READ', { game: state });
 		}
 	}
 
@@ -25,19 +27,14 @@
 
 	function takeToken(event) {
 		const color = event.detail.color;
-		tokensStore.decrement(color);
-		playersStore.player(room.sessionPlayer.uuid).tokens.increment(color);
+		gameService.send('TAKE_TOKEN', { color });
 	}
 
 	function handleAction(event) {
 		switch (event.detail.value) {
 			case 'endTurn':
-				const nextPlayerIndex = nextPlayerIndexFn(
-					gameState.currentPlayerIndex,
-					Object.values(gameState.players).length
-				);
-				//const gameState = writeState(...gameState, nextPlayerIndex);
-				gameService.send('PUBLISH', { callback: gameState });
+				gameService.send('END_TURN');
+				gameService.send('PUBLISH', { callback: room.publishState });
 				break;
 		}
 	}

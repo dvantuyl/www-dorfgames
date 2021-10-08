@@ -2,8 +2,13 @@ export * from '$lib/types';
 
 export interface GameCtx {
 	game: GameState;
-	local: {
-		sessionPlayerId: string;
+	local: LocalState;
+}
+
+export interface LocalState {
+	sessionPlayerId: string;
+	escrow: {
+		tokens: Tokens;
 	};
 }
 
@@ -14,10 +19,11 @@ export interface GameState {
 }
 
 export type GameEvent =
-	| { type: 'SETUP'; users: Users }
-	| { type: 'READ'; game: GameState }
+	| { type: 'SETUP'; users: Users; sessionPlayerId: string }
+	| { type: 'READ'; game: GameState; sessionPlayerId: string }
 	| { type: 'PUBLISH'; callback: (game: GameState) => void }
-	| { type: 'END_TURN'; callback: (game: GameState) => void };
+	| { type: 'END_TURN'; callback: (game: GameState) => void }
+	| { type: 'TAKE_TOKEN'; color: ColorType };
 
 export type Players = Record<string, Player>;
 export type Tokens = { [K in ColorType]: number };

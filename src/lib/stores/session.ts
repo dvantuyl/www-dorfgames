@@ -11,7 +11,7 @@ function createSessionStore(ref: IGunChainReference<any, 'users', 'root'>) {
 
 	if (userRef()) {
 		userRef().once((data) => {
-			const user = pick(data, ['alias', 'createdAt', 'loginAt']);
+			const user = pick(data, ['alias', 'createdAt']);
 			const loginAt = Date.now();
 			userRef().put({ ...user, loginAt });
 		});
@@ -43,15 +43,15 @@ function createSessionStore(ref: IGunChainReference<any, 'users', 'root'>) {
 			const key = 'userId';
 			const loginAt = Date.now();
 			$userRef = ref.set({ alias, createdAt: loginAt, loginAt });
-			const uuid = $userRef._.get;
-			localStorage.setItem(key, JSON.stringify(uuid));
+			const id = $userRef._.get;
+			localStorage.setItem(key, JSON.stringify(id));
 			initUserRefSubscription();
 		}
 	}
 
 	function initUserRefSubscription() {
-		userRef().on(function (data, uuid) {
-			const user = { ...pick(data, ['alias', 'createdAt', 'loginAt']), uuid };
+		userRef().on(function (data, id) {
+			const user = { ...pick(data, ['alias', 'createdAt', 'loginAt']), id };
 			update((session) => {
 				return { ...session, user };
 			});
@@ -62,7 +62,7 @@ function createSessionStore(ref: IGunChainReference<any, 'users', 'root'>) {
 		if (userRef()) {
 			update((session) => {
 				const user = { ...session.user, alias };
-				userRef().put({ ...pick(user, ['alias', 'createdAt', 'loginAt']) });
+				userRef().put(pick(user, ['alias', 'createdAt', 'loginAt']));
 				return { ...session, user };
 			});
 		}

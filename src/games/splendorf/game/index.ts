@@ -33,7 +33,7 @@ export const Color = colors.reduce((acc: { [K in ColorType]?: ColorType }, clr: 
 	return acc;
 }, {}) as { [K in ColorType]: ColorType };
 
-export function setupState(users: { uuid: string; alias: string }[]): State {
+export function setupState(users: { id: string; alias: string }[]): State {
 	return {
 		players: setupPlayers(users),
 		tokens: setupTokens(users.length)

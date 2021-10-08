@@ -7,7 +7,7 @@ export interface Locals {
 }
 
 export type User = {
-	uuid: string;
+	id: string;
 	alias: string;
 	createdAt: number;
 	loginAt: number;

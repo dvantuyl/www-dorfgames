@@ -13,7 +13,7 @@ function createRoomStore(ref: IGunChainReference<any, 'rooms', false>) {
 		return {
 			join: () => join(roomRef),
 			once: (callback: (room: Room) => void) => once(roomRef, callback),
-			players: (callback: (players: Users) => void) => players(roomRef, callback),
+			users: (callback: (users: Users) => void) => users(roomRef, callback),
 			publishState: (nextState: Record<string, unknown>) => publishState(roomRef, nextState),
 			subscribe: (callback: (room: Room) => void) => subscribe(roomRef, callback)
 		};
@@ -21,7 +21,7 @@ function createRoomStore(ref: IGunChainReference<any, 'rooms', false>) {
 }
 
 function join(roomRef: RoomRef): void {
-	roomRef.get('players').set(session.userRef());
+	roomRef.get('users').set(session.userRef());
 	session.userRef().get('rooms').set(roomRef);
 }
 
@@ -36,21 +36,24 @@ function once(
 	});
 }
 
-function players(
+function users(
 	roomRef: RoomRef,
-	callback: (players: Users) => void
-): IGunChainReference<any, 'players', false> {
-	let currentPlayers: Users = {};
+	callback: (users: Users) => void
+): IGunChainReference<any, 'users', false> {
+	let currentUsers: Users = {};
 
 	return roomRef
-		.get('players')
+		.get('users')
 		.map()
-		.on((data, userId) => {
-			if (data && data.alias) {
-				const updatedPlayers = { ...currentPlayers, [userId]: pick(data, ['uuid', 'alias']) };
-				if (!isEqual(currentPlayers, updatedPlayers)) {
-					currentPlayers = updatedPlayers;
-					callback(currentPlayers);
+		.on((data, id) => {
+			if (data) {
+				const updatedUsers = {
+					...currentUsers,
+					[id]: { ...pick(data, ['alias', 'createdAt', 'loginAt']), id }
+				};
+				if (!isEqual(currentUsers, updatedUsers)) {
+					currentUsers = updatedUsers;
+					callback(currentUsers);
 				}
 			}
 		});
