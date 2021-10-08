@@ -44,7 +44,7 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 							actions: ['setup']
 						},
 						READ: {
-							target: 'determiningNextPlayerTurn',
+							target: 'waitingTurn',
 							actions: ['read']
 						}
 					}
@@ -52,16 +52,10 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 				waitingToPublish: {
 					on: {
 						PUBLISH: {
-							target: 'determiningNextPlayerTurn',
+							target: 'waitingTurn',
 							actions: ['publish']
 						}
 					}
-				},
-				determiningNextPlayerTurn: {
-					always: [
-						{ target: 'takingTurn', cond: 'isSessionPlayerTurn' },
-						{ target: 'waitingTurn', cond: 'notSessionPlayerTurn' }
-					]
 				},
 				takingTurn: {
 					on: {
@@ -77,9 +71,10 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 					}
 				},
 				waitingTurn: {
+					always: [{ target: 'takingTurn', cond: 'isSessionPlayerTurn' }],
 					on: {
 						READ: {
-							target: 'determiningNextPlayerTurn',
+							target: 'waitingTurn',
 							actions: ['read']
 						}
 					}
