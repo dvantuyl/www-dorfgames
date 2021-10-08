@@ -50,7 +50,6 @@ function setupPlayers(users: Users): Players {
 	return reduce(
 		shuffle(users),
 		function (result, user, index) {
-			console.log('setupPlayer', result, user, index);
 			const players = {
 				...result,
 				[user.id]: {

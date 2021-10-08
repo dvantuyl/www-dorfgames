@@ -2,8 +2,7 @@
 	import Player from '../components/Player.svelte';
 	export let players;
 
-	const orderedPlayers = Object.values(players).sort((a, b) => a.index - b.index);
-	console.log(orderedPlayers);
+	$: orderedPlayers = Object.values(players).sort((a, b) => a.index - b.index);
 </script>
 
 <div class="h-full w-full">

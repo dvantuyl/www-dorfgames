@@ -129,7 +129,7 @@
 			<main class="flex-grow">
 				<svelte:component
 					this={Game}
-					setup="{stateIndex === 1},"
+					setup={stateIndex === 1}
 					room={{
 						users,
 						sessionUser: $session.user,

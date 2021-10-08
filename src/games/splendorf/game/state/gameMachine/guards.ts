@@ -2,7 +2,6 @@ import type { GameCtx, GameEvent } from '../../types';
 
 export const guards = {
 	isSessionPlayerTurn: (context: GameCtx): boolean => {
-		console.log('isSessionPlayerTurn', context);
 		const sessionPlayerId = context.local.sessionPlayerId;
 		const currentPlayerIndex = context.game.currentPlayerIndex;
 		const players = context.game.players;
@@ -16,7 +15,6 @@ export const guards = {
 	},
 	canTakeToken: (context: GameCtx, event: GameEvent): boolean => {
 		if (event.type !== 'TAKE_TOKEN') return;
-		console.log('canTakeToken', event.color);
 		return true;
 	}
 };
