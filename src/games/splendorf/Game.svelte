@@ -37,7 +37,7 @@
 					Object.values(gameState.players).length
 				);
 				//const gameState = writeState(...gameState, nextPlayerIndex);
-				//gameService.send('PUBLISH', { callback: gameState });
+				gameService.send('PUBLISH', { callback: gameState });
 				break;
 		}
 	}

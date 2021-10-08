@@ -1,6 +1,7 @@
 import { createMachine } from 'xstate';
 import type { GameEvent, GameCtx } from '../../types';
 import { actions } from './actions';
+import { guards } from './guards';
 
 export const gameMachine = createMachine<GameCtx, GameEvent>(
 	{
@@ -27,27 +28,49 @@ export const gameMachine = createMachine<GameCtx, GameEvent>(
 			initializing: {
 				on: {
 					SETUP: {
-						target: 'choosingNextPlayer',
+						target: 'waitingToPublish',
 						actions: ['setup']
 					},
+					READ: {
+						target: 'determiningNextPlayerTurn',
+						actions: ['read']
+					}
+				}
+			},
+			waitingToPublish: {
+				on: {
+					PUBLISH: {
+						target: 'determiningNextPlayerTurn',
+						actions: ['publish']
+					}
+				}
+			},
+			determiningNextPlayerTurn: {
+				always: [
+					{ target: 'takingTurn', cond: 'isSessionPlayerTurn' },
+					{ target: 'waitingTurn', cond: 'notPlayerTurn' }
+				]
+			},
+			takingTurn: {
+				on: {
+					END_TURN: {
+						target: 'waitingToPublish',
+						actions: ['endTurn']
+					}
+				}
+			},
+			waitingTurn: {
+				on: {
 					READ: {
 						target: 'choosingNextPlayer',
 						actions: ['read']
 					}
 				}
-			},
-			publishing: {
-				always: [
-					{
-						target: 'choosingNextPlayer',
-						actions: ['publish']
-					}
-				]
-			},
-			choosingNextPlayer: {}
+			}
 		}
 	},
 	{
-		actions
+		actions,
+		guards
 	}
 );

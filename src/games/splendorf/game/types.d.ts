@@ -16,7 +16,8 @@ export interface GameState {
 export type GameEvent =
 	| { type: 'SETUP'; users: Users }
 	| { type: 'READ'; game: GameState }
-	| { type: 'PUBLISH'; callback: (game: GameState) => void };
+	| { type: 'PUBLISH'; callback: (game: GameState) => void }
+	| { type: 'END_TURN'; callback: (game: GameState) => void };
 
 export type Players = Record<string, Player>;
 export type Tokens = { [K in ColorType]: number };

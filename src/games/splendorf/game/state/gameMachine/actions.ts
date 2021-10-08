@@ -16,6 +16,15 @@ export const actions = {
 			return event.game;
 		}
 	}),
+	endTurn: assign({
+		game: (context: GameCtx) => {
+			const currentPlayerIndex = context.game.currentPlayerIndex;
+			const numPlayers = Object.values(context.game.players).length;
+			const nextPlayerIndex = currentPlayerIndex === numPlayers - 1 ? 0 : currentPlayerIndex + 1;
+			return { ...context.game, currentPlayerIndex: nextPlayerIndex };
+		}
+		// return currentPlayerIndex === numPlayers - 1 ? 0 : currentPlayerIndex + 1;
+	}),
 	publish: (context: GameCtx, event: GameEvent): void => {
 		if (event.type !== 'PUBLISH') return;
 		event.callback(context.game);
