@@ -13,7 +13,13 @@ export function waiting(
 		.get('rooms')
 		.map()
 		.on((room, key) => {
-			// db.get('rooms').get(key).put(null); // DELETE ALL ROOMS
+			if (oldRoom(room)) {
+				console.log('deletedOldRoom', room.title);
+				db.get('rooms').get(key).put(null);
+				delete $rooms[key];
+				room = null;
+			}
+
 			if (room && room.game === game && room.stateIndex === 0) {
 				const updatedRooms = { ...$rooms, [key]: room };
 				if (!isEqual($rooms, updatedRooms)) {
@@ -25,4 +31,12 @@ export function waiting(
 				callback($rooms);
 			}
 		});
+}
+
+function oldRoom(room): boolean {
+	const oldHours = 2;
+	const oldDate = new Date(+new Date() - 1 * 1000 * 60 * 60 * oldHours);
+	const roomUpdated = GUN.state.is(room, 'stateIndex');
+	const roomUpdatedDate = roomUpdated ? new Date(roomUpdated) : null;
+	return roomUpdatedDate && oldDate > roomUpdatedDate;
 }
