@@ -54,6 +54,7 @@
 	let state;
 	let roomTitle;
 	let subscriptions = new Set<IGunChainReference>();
+	let setup = false;
 
 	onMount(() => {
 		window.addEventListener('popstate', handleLocationChange);
@@ -112,7 +113,7 @@
 	}
 
 	function handleStartGame() {
-		roomStore.publishState({});
+		setup = true;
 	}
 </script>
 
@@ -121,7 +122,7 @@
 </svelte:head>
 
 <SessionWrapper>
-	{#if roomStore && stateIndex > 0}
+	{#if roomStore && (stateIndex > 0 || setup)}
 		<div class="w-screen h-screen overflow-hidden flex flex-col">
 			<header class="h-16 px-5 flex-none">
 				<Header />
@@ -129,7 +130,7 @@
 			<main class="flex-grow">
 				<svelte:component
 					this={Game}
-					setup={stateIndex === 1}
+					{setup}
 					room={{
 						users,
 						sessionUser: $session.user,

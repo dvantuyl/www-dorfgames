@@ -1,32 +1,42 @@
 export * from '$lib/types';
 
+export type GameEvent =
+	| { type: 'SETUP'; users: Users }
+	| { type: 'UPDATE'; game: GameState }
+	| { type: 'TOKENS.TAKE'; color: ColorType }
+	| { type: 'GAME.PUBLISH'; callback: (game: GameState) => void }
+	| { type: 'GAME.END_TURN'; callback: (game: GameState) => void };
+
+export type TokensEvent =
+	| { type: 'SETUP'; users: Users }
+	| { type: 'UPDATE'; game: GameState }
+	| { type: 'TOKENS.TAKE'; color: ColorType };
+
+export type PlayersEvent =
+	| { type: 'SETUP'; users: Users }
+	| { type: 'UPDATE'; game: GameState }
+	| { type: 'TOKENS.TAKE'; color: ColorType; sessionPlayerId: string };
+
 export interface GameCtx {
-	game: GameState;
-	local: LocalState;
-}
-
-export interface LocalState {
 	sessionPlayerId: string;
-	escrow: {
-		tokens: Tokens;
-	};
+	currentPlayerIndex: number;
+	playersRef: StateMachine<PlayersState, any, PlayersEvent>;
+	tokensRef: StateMachine<TokensState, any, TokensEvent>;
 }
 
+export interface PlayersCtx {
+	players: PlayersState;
+}
+export interface TokensCtx {
+	tokens: TokensState;
+}
 export interface GameState {
 	currentPlayerIndex: number;
-	players: Players;
-	tokens: Tokens;
+	players: PlayersState;
+	tokens: TokensState;
 }
-
-export type GameEvent =
-	| { type: 'SETUP'; users: Users; sessionPlayerId: string }
-	| { type: 'READ'; game: GameState; sessionPlayerId: string }
-	| { type: 'PUBLISH'; callback: (game: GameState) => void }
-	| { type: 'END_TURN'; callback: (game: GameState) => void }
-	| { type: 'TAKE_TOKEN'; color: ColorType };
-
-export type Players = Record<string, Player>;
-export type Tokens = { [K in ColorType]: number };
+export type PlayersState = Record<string, Player>;
+export type TokensState = { [K in ColorType]: number };
 
 export type Player = {
 	index: number;
@@ -45,9 +55,3 @@ enum ColorEnum {
 }
 
 export type ColorType = keyof typeof ColorEnum;
-export const colors = <ColorType[]>Object.values(ColorEnum).filter((e) => typeof e === 'string');
-
-export const Color = colors.reduce((acc: { [K in ColorType]?: ColorType }, clr: ColorType) => {
-	acc[clr] = clr as ColorType;
-	return acc;
-}, {}) as { [K in ColorType]: ColorType };

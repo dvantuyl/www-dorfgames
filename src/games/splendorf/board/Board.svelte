@@ -1,33 +1,24 @@
-<script>
-	import TokenSection from './sections/TokenSection.svelte';
-	import PlayerSection from './sections/PlayerSection.svelte';
-	import ActionSection from './sections/ActionSection.svelte';
-	import { createEventDispatcher } from 'svelte';
+<script lang="ts">
+	import TokensSection from './sections/TokensSection.svelte';
+	import PlayersSection from './sections/PlayersSection.svelte';
+	import ActionsSection from './sections/ActionsSection.svelte';
+	import type { GameCtx, GameEvent } from '../game/types';
+	import type { StateMachine } from 'xstate';
 
-	export let players;
-	export let tokens;
-
-	const dispatch = createEventDispatcher();
-
-	function forwardTakeToken(event) {
-		dispatch('takeToken', event.detail);
-	}
+	export let game: StateMachine<GameCtx, any, GameEvent>;
+	export let room;
 </script>
 
 <div class="w-full h-full p-2 flex flex-col">
-	{#if players}
-		<div class="flex-none w-full">
-			<PlayerSection {players} />
-		</div>
-	{/if}
+	<div class="flex-none w-full">
+		<PlayersSection {game} />
+	</div>
 
-	{#if tokens}
-		<div class="w-1/6 flex-grow">
-			<TokenSection {tokens} on:click={forwardTakeToken} />
-		</div>
-	{/if}
+	<div class="w-1/6 flex-grow">
+		<TokensSection {game} />
+	</div>
 
 	<div class="flex-none h-20 w-full">
-		<ActionSection on:action />
+		<ActionsSection {game} {room} />
 	</div>
 </div>

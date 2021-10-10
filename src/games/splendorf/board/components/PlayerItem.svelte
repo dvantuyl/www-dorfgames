@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { colors, Player } from '../../game';
+	import { colors } from '../../game/index';
 	import TokenCard from './TokenCard.svelte';
 
-	export let player: Player;
+	export let player;
 
 	const initials = player.name
 		.split(' ')

@@ -1,10 +1,16 @@
 <script>
 	import { createEventDispatcher } from 'svelte';
-
+	export let game;
+	export let room;
 	const dispatch = createEventDispatcher();
 
 	function handleAction(event) {
-		dispatch('action', { value: event.target.value });
+		switch (event.target.value) {
+			case 'endTurn':
+				game.send('GAME.END_TURN');
+				game.send('GAME.PUBLISH', { callback: room.publishState });
+				break;
+		}
 	}
 </script>
 

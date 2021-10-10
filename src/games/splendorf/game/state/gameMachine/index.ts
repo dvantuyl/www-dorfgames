@@ -1,8 +1,11 @@
-import { createMachine } from 'xstate';
 import type { StateMachine } from 'xstate';
 import type { GameEvent, GameCtx } from '../../types';
-import { actions } from './actions';
+import { createMachine, spawn, assign, forwardTo } from 'xstate';
+import { log, send } from 'xstate/lib/actions';
 import { guards } from './guards';
+import { actions } from './actions';
+import { tokensMachine } from '../tokensMachine';
+import { playersMachine } from '../playersMachine';
 
 export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx, any, GameEvent> {
 	return createMachine<GameCtx, GameEvent>(
@@ -10,72 +13,63 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 			id: 'gameMachine',
 			initial: 'initializing',
 			context: {
-				local: {
-					sessionPlayerId,
-					escrow: {
-						tokens: {
-							bk: 0,
-							wh: 0,
-							re: 0,
-							bl: 0,
-							gr: 0,
-							go: 0
-						}
-					}
-				},
-				game: {
-					currentPlayerIndex: 0,
-					players: {},
-					tokens: {
-						bk: 0,
-						wh: 0,
-						re: 0,
-						bl: 0,
-						gr: 0,
-						go: 0
-					}
-				}
+				sessionPlayerId,
+				currentPlayerIndex: 0,
+				playersRef: null,
+				tokensRef: null
 			},
 			states: {
 				initializing: {
+					entry: assign({
+						playersRef: () => spawn(playersMachine, 'players'),
+						tokensRef: () => spawn(tokensMachine, 'tokens')
+					}),
 					on: {
 						SETUP: {
 							target: 'waitingToPublish',
-							actions: ['setup']
+							actions: [log('GAME.SETUP'), forwardTo('players'), forwardTo('tokens')]
 						},
-						READ: {
+						UPDATE: {
 							target: 'waitingTurn',
-							actions: ['read']
+							actions: [log('GAME.UPDATE'), 'update', forwardTo('players'), forwardTo('tokens')]
 						}
 					}
 				},
 				waitingToPublish: {
+					entry: log('waitingToPublish'),
 					on: {
-						PUBLISH: {
+						'GAME.PUBLISH': {
 							target: 'waitingTurn',
-							actions: ['publish']
-						}
-					}
-				},
-				takingTurn: {
-					on: {
-						END_TURN: {
-							target: 'waitingToPublish',
-							actions: ['endTurn']
-						},
-						TAKE_TOKEN: {
-							target: 'takingTurn',
-							actions: ['takeToken'],
-							cond: 'canTakeToken'
+							actions: [log('GAME.PUBLISH'), 'publish']
 						}
 					}
 				},
 				waitingTurn: {
+					entry: log('waitingTurn'),
 					always: [{ target: 'takingTurn', cond: 'isSessionPlayerTurn' }],
 					on: {
-						READ: {
+						UPDATE: {
 							target: 'waitingTurn',
-							actions: ['read']
+							actions: [log('GAME.UPDATE'), 'update', forwardTo('players'), forwardTo('tokens')]
+						}
+					}
+				},
+				takingTurn: {
+					entry: log('takingTurn'),
+					on: {
+						'TOKENS.TAKE': {
+							target: 'takingTurn',
+							actions: [
+								log('TOKENS.TAKE'),
+								forwardTo('tokens'),
+								send((ctx, evt) => ({ ...evt, sessionPlayerId: ctx.sessionPlayerId }), {
+									to: 'players'
+								})
+							]
+						},
+						'GAME.END_TURN': {
+							target: 'waitingToPublish',
+							actions: ['endTurn']
 						}
 					}
 				}
