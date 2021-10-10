@@ -66,7 +66,8 @@ function lessThan3TokensSelected(ctx: GameCtx): boolean {
 function atLeast4TokensAvailable(ctx: GameCtx, evt: GameEvent): boolean {
 	if (evt.type !== 'TOKENS.SELECT') return;
 	const tokens = ctx.tokensRef.getSnapshot().context.tokens;
-	return tokens[evt.color] >= 4;
+	// we need to fudge the 'in a single turn' here by checking >= 3 instead of 4
+	return tokens[evt.color] >= 3;
 }
 
 function lessThan2TokensSelected(ctx: GameCtx): boolean {
