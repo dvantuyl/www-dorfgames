@@ -10,7 +10,12 @@
 				break;
 			case 'endTurn':
 				game.send('GAME.END_TURN');
-				game.send('GAME.PUBLISH', { callback: room.publishState });
+				game.send('GAME.PUBLISH', {
+					callback: (params) => {
+						console.log('GAME.PUBLISH callback', params, room);
+						room.publishState(params);
+					}
+				});
 				break;
 		}
 	}

@@ -3,6 +3,7 @@
 	import shuffle from 'lodash/shuffle.js';
 	import { interpret } from 'xstate';
 	import { createGameMachine } from './game';
+	import { onMount } from 'svelte';
 
 	export let room;
 	export let state;
@@ -10,30 +11,24 @@
 
 	let gameMachine;
 	let game;
+	let initialized = false;
 
-	$: if (room && room.sessionUser) {
+	onMount(() => {
 		gameMachine = createGameMachine(room.sessionUser.id);
 		game = interpret(gameMachine).start();
-	}
-
-	$: if (game) {
 		if (setup) {
 			game.send('SETUP', { users: shuffle(room.users) });
 			game.send('GAME.PUBLISH', { callback: room.publishState });
-		} else {
-			console.log('received UPDATE', state);
-			game.send('UPDATE', { game: state });
 		}
-	}
+		initialized = true;
+	});
 
-	function handleAction(event) {
-		switch (event.detail.value) {
-			case 'endTurn':
-				game.send('END_TURN');
-				game.send('GAME.PUBLISH', { callback: room.publishState });
-				break;
-		}
+	$: if (!setup && initialized && state) {
+		console.log('received UPDATE', state);
+		game.send('UPDATE', { game: state });
 	}
 </script>
 
-<Board {game} {room} />
+{#if initialized}
+	<Board {game} {room} />
+{/if}
