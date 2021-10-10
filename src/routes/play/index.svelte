@@ -35,7 +35,7 @@
 	{#each games as game}
 		<a
 			class="block rounded bg-green-400 text-green-900 font-bold text-2xl text-center capitalize p-4"
-			href="/games/{game.key}">{game.title}</a
+			href="/play/{game.key}">{game.title}</a
 		>
 	{/each}
 </section>

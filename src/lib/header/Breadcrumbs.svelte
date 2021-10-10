@@ -25,7 +25,7 @@
 		const [namespace, ...rest] = [...pathItems, url.hash.substring(1)].filter((i) => i.length);
 
 		// Set Games Breadcrumbs
-		if (namespace === 'games') {
+		if (namespace === 'play') {
 			const [game, room] = rest;
 			if (game && room) {
 				gameRoomBreadcrumb = { game, room };
@@ -48,7 +48,7 @@
 	{#if gameRoomBreadcrumb.game}
 		<i class="hidden md:block text-xl font-bold text-gray-500 mx-2">navigate_next</i>
 		<h1 class="hidden md:block text-xl font-bold capitalize text-purple-900">
-			<a rel="external" href="/games/{gameRoomBreadcrumb.game}">{gameRoomBreadcrumb.game}</a>
+			<a rel="external" href="/play/{gameRoomBreadcrumb.game}">{gameRoomBreadcrumb.game}</a>
 		</h1>
 	{/if}
 	{#if gameRoomBreadcrumb.room && gameRoomBreadcrumb.roomTitle}

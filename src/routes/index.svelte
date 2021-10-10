@@ -7,6 +7,6 @@
 <section class="w-full h-full grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-5 gap-4">
 	<a
 		class="block rounded bg-green-400 text-green-900 font-bold text-2xl sm:text-5xl text-center capitalize p-4"
-		href="/games/splendorf">Splendorf</a
+		href="/play/splendorf">Splendorf</a
 	>
 </section>

@@ -7,7 +7,7 @@
 	<Breadcrumbs />
 
 	<div class="flex gap-2 divide-x-2 divide-green-500 items-center">
-		<div><a href="/games" class="font-semibold">Games</a></div>
+		<div><a href="/play" class="font-semibold">Games</a></div>
 		<SessionUser />
 	</div>
 
