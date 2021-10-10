@@ -8,7 +8,7 @@
 
 	function handleClick(event) {
 		const color = event.detail.color;
-		game.send('TOKENS.TAKE', { color });
+		game.send('TOKENS.SELECT', { color });
 	}
 </script>
 

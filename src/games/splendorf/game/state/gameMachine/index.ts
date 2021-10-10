@@ -6,6 +6,7 @@ import { guards } from './guards';
 import { actions } from './actions';
 import { tokensMachine } from '../tokensMachine';
 import { playersMachine } from '../playersMachine';
+import { tokensInit } from '../..';
 
 export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx, any, GameEvent> {
 	return createMachine<GameCtx, GameEvent>(
@@ -15,6 +16,7 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 			context: {
 				sessionPlayerId,
 				currentPlayerIndex: 0,
+				turn: { tokens: tokensInit() },
 				playersRef: null,
 				tokensRef: null
 			},
@@ -27,40 +29,50 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 					on: {
 						SETUP: {
 							target: 'waitingToPublish',
-							actions: [log('GAME.SETUP'), forwardTo('players'), forwardTo('tokens')]
+							actions: [forwardTo('players'), forwardTo('tokens')]
 						},
 						UPDATE: {
 							target: 'waitingTurn',
-							actions: [log('GAME.UPDATE'), 'update', forwardTo('players'), forwardTo('tokens')]
+							actions: ['update', forwardTo('players'), forwardTo('tokens')]
 						}
 					}
 				},
 				waitingToPublish: {
-					entry: log('waitingToPublish'),
 					on: {
 						'GAME.PUBLISH': {
 							target: 'waitingTurn',
-							actions: [log('GAME.PUBLISH'), 'publish']
+							actions: ['publish']
 						}
 					}
 				},
 				waitingTurn: {
-					entry: log('waitingTurn'),
 					always: [{ target: 'takingTurn', cond: 'isSessionPlayerTurn' }],
 					on: {
 						UPDATE: {
 							target: 'waitingTurn',
-							actions: [log('GAME.UPDATE'), 'update', forwardTo('players'), forwardTo('tokens')]
+							actions: ['update', forwardTo('players'), forwardTo('tokens')]
 						}
 					}
 				},
 				takingTurn: {
-					entry: log('takingTurn'),
 					on: {
-						'TOKENS.TAKE': {
-							target: 'takingTurn',
+						'TOKENS.SELECT': {
+							actions: send((_, evt) => ({ ...evt })),
+							target: 'selectingTokens',
+							cond: 'canSelectToken'
+						},
+						'GAME.END_TURN': {
+							target: 'waitingToPublish',
+							actions: ['endTurn']
+						}
+					}
+				},
+				selectingTokens: {
+					on: {
+						'TOKENS.SELECT': {
+							cond: 'canSelectToken',
 							actions: [
-								log('TOKENS.TAKE'),
+								'selectTurnTokens',
 								forwardTo('tokens'),
 								send((ctx, evt) => ({ ...evt, sessionPlayerId: ctx.sessionPlayerId }), {
 									to: 'players'

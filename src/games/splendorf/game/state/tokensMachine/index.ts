@@ -1,24 +1,17 @@
 import { createMachine, sendUpdate } from 'xstate';
 import type { StateMachine } from 'xstate';
-import type { ColorType, GameState, TokensState, TokensEvent, Users, TokensCtx } from '../../types';
+import type { TokensState, TokensEvent, Users, TokensCtx } from '../../types';
 import { assign, log } from 'xstate/lib/actions';
+import { tokensInit } from '../../index';
 
 export const tokensMachine: StateMachine<TokensCtx, any, TokensEvent> = createMachine({
 	id: 'tokensMachine',
 	context: {
-		tokens: {
-			bk: 0,
-			wh: 0,
-			re: 0,
-			bl: 0,
-			gr: 0,
-			go: 0
-		}
+		tokens: tokensInit()
 	},
 	initial: 'waiting',
 	states: {
 		waiting: {
-			entry: [log('tokens waiting')],
 			on: {
 				SETUP: {
 					target: 'updatingGame',
@@ -32,7 +25,7 @@ export const tokensMachine: StateMachine<TokensCtx, any, TokensEvent> = createMa
 						tokens: (_, event) => event.game.tokens
 					})
 				},
-				'TOKENS.TAKE': {
+				'TOKENS.SELECT': {
 					target: 'updatingGame',
 					actions: assign({
 						tokens: (context, event) => ({
@@ -56,14 +49,7 @@ export const tokensMachine: StateMachine<TokensCtx, any, TokensEvent> = createMa
 
 function setup(users: Users): TokensState {
 	const numPlayers = Object.values(users).length;
-	return {
-		bk: numTokens(numPlayers),
-		wh: numTokens(numPlayers),
-		re: numTokens(numPlayers),
-		bl: numTokens(numPlayers),
-		gr: numTokens(numPlayers),
-		go: numTokens(numPlayers)
-	};
+	return tokensInit(numTokens(numPlayers), { go: 5 });
 }
 
 function numTokens(numPlayers: number): number {

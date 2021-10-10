@@ -3,23 +3,24 @@ export * from '$lib/types';
 export type GameEvent =
 	| { type: 'SETUP'; users: Users }
 	| { type: 'UPDATE'; game: GameState }
-	| { type: 'TOKENS.TAKE'; color: ColorType }
+	| { type: 'TOKENS.SELECT'; color: ColorType }
 	| { type: 'GAME.PUBLISH'; callback: (game: GameState) => void }
 	| { type: 'GAME.END_TURN'; callback: (game: GameState) => void };
 
 export type TokensEvent =
 	| { type: 'SETUP'; users: Users }
 	| { type: 'UPDATE'; game: GameState }
-	| { type: 'TOKENS.TAKE'; color: ColorType };
+	| { type: 'TOKENS.SELECT'; color: ColorType };
 
 export type PlayersEvent =
 	| { type: 'SETUP'; users: Users }
 	| { type: 'UPDATE'; game: GameState }
-	| { type: 'TOKENS.TAKE'; color: ColorType; sessionPlayerId: string };
+	| { type: 'TOKENS.SELECT'; color: ColorType; sessionPlayerId: string };
 
 export interface GameCtx {
 	sessionPlayerId: string;
 	currentPlayerIndex: number;
+	turn: { tokens: TokensState };
 	playersRef: StateMachine<PlayersState, any, PlayersEvent>;
 	tokensRef: StateMachine<TokensState, any, TokensEvent>;
 }

@@ -4,6 +4,7 @@ import type { StateMachine } from 'xstate';
 import type { PlayersState, PlayersEvent, Users, PlayersCtx } from '../../types';
 import reduce from 'lodash/reduce.js';
 import shuffle from 'lodash/shuffle.js';
+import { tokensInit } from '../..';
 
 export const playersMachine: StateMachine<PlayersCtx, any, PlayersEvent> = createMachine({
 	id: 'players',
@@ -13,9 +14,6 @@ export const playersMachine: StateMachine<PlayersCtx, any, PlayersEvent> = creat
 	initial: 'waiting',
 	states: {
 		waiting: {
-			entry: (ctx, evt) => {
-				console.log('players waiting', ctx, evt);
-			},
 			on: {
 				SETUP: {
 					target: 'updatingGame',
@@ -29,7 +27,7 @@ export const playersMachine: StateMachine<PlayersCtx, any, PlayersEvent> = creat
 						players: (_, evt) => evt.game.players
 					})
 				},
-				'TOKENS.TAKE': {
+				'TOKENS.SELECT': {
 					target: 'updatingGame',
 					actions: assign({
 						players: tokensTake
@@ -38,7 +36,6 @@ export const playersMachine: StateMachine<PlayersCtx, any, PlayersEvent> = creat
 			}
 		},
 		updatingGame: {
-			entry: log('players updatingGame'),
 			always: [
 				{
 					target: 'waiting',
@@ -59,14 +56,7 @@ function setup(users: Users): PlayersState {
 					index,
 					id: user.id,
 					name: user.alias,
-					tokens: {
-						bk: 0,
-						wh: 0,
-						re: 0,
-						bl: 0,
-						gr: 0,
-						go: 0
-					}
+					tokens: tokensInit()
 				}
 			};
 			return players;

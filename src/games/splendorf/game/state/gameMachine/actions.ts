@@ -1,4 +1,5 @@
 import { assign } from 'xstate';
+import { tokensInit } from '../..';
 import type { GameEvent, GameCtx } from '../../types';
 
 export const actions = {
@@ -15,8 +16,18 @@ export const actions = {
 		const currentPlayerIndex = context.currentPlayerIndex;
 		event.callback({ players, tokens, currentPlayerIndex });
 	},
+	selectTurnTokens: assign({
+		turn: (ctx: GameCtx, evt: GameEvent) => {
+			if (evt.type !== 'TOKENS.SELECT') return ctx.turn;
+			return {
+				...ctx.turn,
+				tokens: { ...ctx.turn.tokens, [evt.color]: ctx.turn.tokens[evt.color] + 1 }
+			};
+		}
+	}),
 	endTurn: assign({
-		currentPlayerIndex: nextPlayerIndex
+		currentPlayerIndex: nextPlayerIndex,
+		turn: { tokens: tokensInit() }
 	})
 };
 

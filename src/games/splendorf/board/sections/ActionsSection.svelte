@@ -2,7 +2,6 @@
 	import { createEventDispatcher } from 'svelte';
 	export let game;
 	export let room;
-	const dispatch = createEventDispatcher();
 
 	function handleAction(event) {
 		switch (event.target.value) {
