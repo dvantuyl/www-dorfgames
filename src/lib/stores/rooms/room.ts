@@ -60,7 +60,7 @@ function users(
 }
 
 function publishState(roomRef: RoomRef, nextState: Record<string, unknown>): void {
-	console.log('room publishSTate', nextState);
+	console.log('room publishState', nextState);
 	roomRef.once((room) => {
 		const stateIndex = room.stateIndex + 1;
 		const state = JSON.stringify(nextState);

@@ -86,7 +86,7 @@
 			roomStore.subscribe((updatedRoom) => {
 				roomTitle = updatedRoom.title;
 				stateIndex = updatedRoom.stateIndex;
-				state = updatedRoom.state ? JSON.parse(updatedRoom.state) : {};
+				state = updatedRoom.state ? JSON.parse(updatedRoom.state) : null;
 			})
 		);
 		subscriptions.add(roomStore.users((u) => (users = u)));

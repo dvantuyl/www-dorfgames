@@ -23,7 +23,7 @@
 		initialized = true;
 	});
 
-	$: if (!setup && initialized && state) {
+	$: if (initialized && state) {
 		console.log('received UPDATE', state);
 		game.send('UPDATE', { game: state });
 	}
