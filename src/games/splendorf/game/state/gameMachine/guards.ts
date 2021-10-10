@@ -1,6 +1,7 @@
 import type { GameCtx, GameEvent, Player } from '../../types';
 import sum from 'lodash/sum.js';
 import reduce from 'lodash/reduce.js';
+import { Color } from '../..';
 
 export const guards = {
 	isSessionPlayerTurn: (ctx: GameCtx): boolean => {
@@ -9,6 +10,7 @@ export const guards = {
 	canSelectToken: (ctx: GameCtx, evt: GameEvent): boolean => {
 		return (
 			tokensAvailable(ctx, evt) &&
+			tokenIsntGold(evt) &&
 			// - A player can never have more than 10 tokens at the end of
 			//   their turn (including jokers).
 			playerTokensLessThan10(ctx) &&
@@ -30,15 +32,20 @@ function sessionPlayer(ctx: GameCtx): Player {
 	return players[sessionPlayerId];
 }
 
-function playerTokensLessThan10(ctx: GameCtx): boolean {
-	const tokens = sessionPlayer(ctx)?.tokens || {};
-	return sum(Object.values(tokens)) < 10;
-}
-
 function tokensAvailable(ctx: GameCtx, evt: GameEvent): boolean {
 	if (evt.type !== 'TOKENS.SELECT') return;
 	const tokens = ctx.tokensRef.getSnapshot().context.tokens;
 	return tokens[evt.color] > 0;
+}
+
+function tokenIsntGold(evt: GameEvent): boolean {
+	if (evt.type !== 'TOKENS.SELECT') return;
+	return evt.color !== Color.go;
+}
+
+function playerTokensLessThan10(ctx: GameCtx): boolean {
+	const tokens = sessionPlayer(ctx)?.tokens || {};
+	return sum(Object.values(tokens)) < 10;
 }
 
 function selectingDifferentColorToken(ctx: GameCtx, evt: GameEvent): boolean {

@@ -10,10 +10,14 @@
 		const color = event.detail.color;
 		game.send('TOKENS.SELECT', { color });
 	}
+
+	$: disabled = (color): boolean => {
+		return !$game.can({ type: 'TOKENS.SELECT', color });
+	};
 </script>
 
 <div class="w-full h-full flex flex-col items-center">
 	{#each colors as color}
-		<Token count={tokens[color]} {color} on:click={handleClick} />
+		<Token count={tokens[color]} {color} on:click={handleClick} {disabled} />
 	{/each}
 </div>
