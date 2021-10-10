@@ -1,5 +1,6 @@
 <script>
 	import Board from './board/Board.svelte';
+	import shuffle from 'lodash/shuffle.js';
 	import { interpret } from 'xstate';
 	import { createGameMachine } from './game';
 
@@ -17,7 +18,7 @@
 
 	$: if (game) {
 		if (setup) {
-			game.send('SETUP', { users: room.users });
+			game.send('SETUP', { users: shuffle(room.users) });
 			game.send('GAME.PUBLISH', { callback: room.publishState });
 		} else {
 			console.log('received UPDATE', state);

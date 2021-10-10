@@ -3,12 +3,13 @@ import { assign, log } from 'xstate/lib/actions';
 import type { StateMachine } from 'xstate';
 import type { PlayersState, PlayersEvent, Users, PlayersCtx } from '../../types';
 import reduce from 'lodash/reduce.js';
-import shuffle from 'lodash/shuffle.js';
+
 import { tokensInit } from '../..';
 
 export const playersMachine: StateMachine<PlayersCtx, any, PlayersEvent> = createMachine({
 	id: 'players',
 	context: {
+		prev: {},
 		players: {}
 	},
 	initial: 'waiting',
@@ -18,13 +19,21 @@ export const playersMachine: StateMachine<PlayersCtx, any, PlayersEvent> = creat
 				SETUP: {
 					target: 'updatingGame',
 					actions: assign({
+						prev: (_, evt) => setup(evt.users),
 						players: (_, evt) => setup(evt.users)
 					})
 				},
 				UPDATE: {
 					target: 'updatingGame',
 					actions: assign({
+						prev: (_, evt) => evt.game.players,
 						players: (_, evt) => evt.game.players
+					})
+				},
+				'GAME.RESET_TURN': {
+					target: 'updatingGame',
+					actions: assign({
+						players: (ctx) => ctx.prev
 					})
 				},
 				'TOKENS.SELECT': {
@@ -48,7 +57,7 @@ export const playersMachine: StateMachine<PlayersCtx, any, PlayersEvent> = creat
 
 function setup(users: Users): PlayersState {
 	return reduce(
-		shuffle(users),
+		users,
 		function (result, user, index) {
 			const players = {
 				...result,

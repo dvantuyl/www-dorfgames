@@ -79,6 +79,10 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 								})
 							]
 						},
+						'GAME.RESET_TURN': {
+							target: 'takingTurn',
+							actions: ['resetTurn', forwardTo('players'), forwardTo('tokens')]
+						},
 						'GAME.END_TURN': {
 							target: 'waitingToPublish',
 							actions: ['endTurn']

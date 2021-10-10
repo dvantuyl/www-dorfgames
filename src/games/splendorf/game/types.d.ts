@@ -5,17 +5,20 @@ export type GameEvent =
 	| { type: 'UPDATE'; game: GameState }
 	| { type: 'TOKENS.SELECT'; color: ColorType }
 	| { type: 'GAME.PUBLISH'; callback: (game: GameState) => void }
-	| { type: 'GAME.END_TURN'; callback: (game: GameState) => void };
+	| { type: 'GAME.END_TURN'; callback: (game: GameState) => void }
+	| { type: 'GAME.RESET_TURN' };
 
 export type TokensEvent =
 	| { type: 'SETUP'; users: Users }
 	| { type: 'UPDATE'; game: GameState }
-	| { type: 'TOKENS.SELECT'; color: ColorType };
+	| { type: 'TOKENS.SELECT'; color: ColorType }
+	| { type: 'GAME.RESET_TURN' };
 
 export type PlayersEvent =
 	| { type: 'SETUP'; users: Users }
 	| { type: 'UPDATE'; game: GameState }
-	| { type: 'TOKENS.SELECT'; color: ColorType; sessionPlayerId: string };
+	| { type: 'TOKENS.SELECT'; color: ColorType; sessionPlayerId: string }
+	| { type: 'GAME.RESET_TURN' };
 
 export interface GameCtx {
 	sessionPlayerId: string;
@@ -26,9 +29,11 @@ export interface GameCtx {
 }
 
 export interface PlayersCtx {
+	prev: PlayersState;
 	players: PlayersState;
 }
 export interface TokensCtx {
+	prev: TokensState;
 	tokens: TokensState;
 }
 export interface GameState {

@@ -25,6 +25,9 @@ export const actions = {
 			};
 		}
 	}),
+	resetTurn: assign({
+		turn: { tokens: tokensInit() }
+	}),
 	endTurn: assign({
 		currentPlayerIndex: nextPlayerIndex,
 		turn: { tokens: tokensInit() }

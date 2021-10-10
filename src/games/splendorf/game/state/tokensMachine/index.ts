@@ -7,6 +7,7 @@ import { tokensInit } from '../../index';
 export const tokensMachine: StateMachine<TokensCtx, any, TokensEvent> = createMachine({
 	id: 'tokensMachine',
 	context: {
+		prev: tokensInit(),
 		tokens: tokensInit()
 	},
 	initial: 'waiting',
@@ -16,13 +17,21 @@ export const tokensMachine: StateMachine<TokensCtx, any, TokensEvent> = createMa
 				SETUP: {
 					target: 'updatingGame',
 					actions: assign({
+						prev: (_, event) => setup(event.users),
 						tokens: (_, event) => setup(event.users)
 					})
 				},
 				UPDATE: {
 					target: 'updatingGame',
 					actions: assign({
+						prev: (_, event) => event.game.tokens,
 						tokens: (_, event) => event.game.tokens
+					})
+				},
+				'GAME.RESET_TURN': {
+					target: 'updatingGame',
+					actions: assign({
+						tokens: (ctx) => ctx.prev
 					})
 				},
 				'TOKENS.SELECT': {
