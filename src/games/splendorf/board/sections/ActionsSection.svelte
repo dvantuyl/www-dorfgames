@@ -23,7 +23,7 @@
 
 <div class="h-full w-full flex justify-around items-center">
 	<button
-		class="bg-gray-400 border-2 border-gray-700 p-2 rounded-lg font-black text-gray-700 disabled:hidden"
+		class="bg-gray-400 border-2 border-gray-700 p-2 rounded-lg font-black text-gray-700 disabled:opacity-0"
 		value="GAME.RESET_TURN"
 		on:click={handleAction}
 		disabled={disabled('GAME.RESET_TURN')}
@@ -31,7 +31,7 @@
 		RESET TURN
 	</button>
 	<button
-		class="bg-gray-400 border-2 border-gray-700 p-2 rounded-lg font-black text-gray-700 disabled:hidden"
+		class="bg-gray-400 border-2 border-gray-700 p-2 rounded-lg font-black text-gray-700 disabled:opacity-0"
 		value="GAME.END_TURN"
 		on:click={handleAction}
 		disabled={disabled('GAME.END_TURN')}
