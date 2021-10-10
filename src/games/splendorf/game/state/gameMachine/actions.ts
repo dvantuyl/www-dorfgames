@@ -14,7 +14,6 @@ export const actions = {
 		const { players } = context.playersRef.getSnapshot().context;
 		const { tokens } = context.tokensRef.getSnapshot().context;
 		const currentPlayerIndex = context.currentPlayerIndex;
-		console.log('publish', { players, tokens, currentPlayerIndex });
 		event.callback({ players, tokens, currentPlayerIndex });
 	},
 	selectTurnTokens: assign({

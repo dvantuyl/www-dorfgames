@@ -1,8 +1,8 @@
 <svelte:head>
-	<title>Dorfgames</title>
+	<title>dorf.games</title>
 </svelte:head>
 
-<h1 class="text-4xl sm:text-8xl text-center my-10 sm:my-24 font-bold">Dorfgames</h1>
+<h1 class="text-4xl sm:text-8xl text-center my-10 sm:my-24 font-bold">dorf.games</h1>
 
 <section class="w-full h-full grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-5 gap-4">
 	<a

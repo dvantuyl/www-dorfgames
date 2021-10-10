@@ -43,7 +43,7 @@
 
 <div class="flex items-center">
 	{#if showTitle}
-		<h1 class="text-xl font-bold text-purple-900"><a href="/">Dorfgames</a></h1>
+		<h1 class="text-xl font-bold text-purple-900"><a href="/">dorf.games</a></h1>
 	{/if}
 	{#if gameRoomBreadcrumb.game}
 		<i class="hidden md:block text-xl font-bold text-gray-500 mx-2">navigate_next</i>

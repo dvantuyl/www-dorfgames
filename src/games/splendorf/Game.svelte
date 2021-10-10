@@ -24,7 +24,7 @@
 	});
 
 	$: if (initialized && state) {
-		console.log('received UPDATE', state);
+		console.log('game UPDATE', state);
 		game.send('UPDATE', { game: state });
 	}
 </script>
