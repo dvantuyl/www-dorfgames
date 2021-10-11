@@ -16,7 +16,7 @@
 		<PlayersSection {game} />
 	</div>
 	<div>
-		<GoalsSection {game} />
+		<GoalsSection />
 	</div>
 	<div class="row-span-2">
 		<TokensSection {game} />

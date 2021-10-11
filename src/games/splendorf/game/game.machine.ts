@@ -6,6 +6,7 @@ import { guards } from './game.guards';
 import { actions } from './game.actions';
 import { tokensMachine } from './tokens';
 import { playersMachine } from './players';
+import { cardsMachine } from './cards';
 import { createGameCtx } from './game.model';
 
 export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx, any, GameEvt> {
@@ -20,16 +21,17 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 				initializing: {
 					entry: assign({
 						playersRef: () => spawn(playersMachine, 'players'),
-						tokensRef: () => spawn(tokensMachine, 'tokens')
+						tokensRef: () => spawn(tokensMachine, 'tokens'),
+						cardsRef: () => spawn(cardsMachine, 'cards')
 					}),
 					on: {
 						SETUP: {
 							target: 'waitingToPublish',
-							actions: [forwardTo('players'), forwardTo('tokens')]
+							actions: [forwardTo('players'), forwardTo('tokens'), forwardTo('cards')]
 						},
 						UPDATE: {
 							target: 'waitingTurn',
-							actions: ['update', forwardTo('players'), forwardTo('tokens')]
+							actions: ['update', forwardTo('players'), forwardTo('tokens'), forwardTo('cards')]
 						}
 					}
 				},

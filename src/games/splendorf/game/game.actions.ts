@@ -13,8 +13,9 @@ export const actions = {
 		if (event.type !== 'GAME.PUBLISH') return;
 		const { players } = context.playersRef.getSnapshot().context;
 		const { tokens } = context.tokensRef.getSnapshot().context;
+		const { cards } = context.cardsRef.getSnapshot().context;
 		const currentPlayerIndex = context.currentPlayerIndex;
-		event.callback({ players, tokens, currentPlayerIndex });
+		event.callback({ players, tokens, cards, currentPlayerIndex });
 	},
 	selectTurnTokens: assign({
 		turn: (ctx: GameCtx, evt: GameEvt) => {

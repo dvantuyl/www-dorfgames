@@ -11,7 +11,7 @@
 			width="100%"
 			height="100%"
 			viewBox="0 0 100 100"
-			class="fill-current {ColorClass[color].bd}"
+			class="fill-current {ColorClass[color].text.bd}"
 		>
 			<circle cx="50" cy="50" r="50" />
 		</svg>
@@ -21,7 +21,7 @@
 			width="100%"
 			height="100%"
 			viewBox="0 0 100 100"
-			class="fill-current {ColorClass[color].bg}"
+			class="fill-current {ColorClass[color].text.bg}"
 		>
 			<circle cx="50" cy="50" r="40" />
 		</svg>
@@ -31,7 +31,7 @@
 			height="100%"
 			width="100%"
 			viewBox="0 0 100 100"
-			class="fill-current {ColorClass[color].tx}"
+			class="fill-current {ColorClass[color].text.tx}"
 		>
 			<text
 				x="50"

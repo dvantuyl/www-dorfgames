@@ -1,4 +1,5 @@
-import type { Color, Card } from '../types';
+import type { Color, Card, GameCards } from '../types';
+import shuffle from 'lodash/shuffle.js';
 import { Clr } from '../colors';
 
 type cardTableRow = [number, Color, number, number, number, number, number, number, number];
@@ -111,14 +112,39 @@ const createCard = (
 	bl: number,
 	gr: number,
 	go: number
-): Card => {
-	return {
-		id,
-		row,
-		clr,
-		pts,
-		cost: { bk, wh, re, bl, gr, go }
-	};
-};
+): Card => ({
+	id,
+	row,
+	clr,
+	pts,
+	cost: { bk, wh, re, bl, gr, go }
+});
 
-export default cardTable.map((c, i) => createCard(i, ...c)) as Array<Card>;
+function createGameCards(): GameCards {
+	const cards = shuffle(cardTable.map((c, i) => createCard(i, ...c))) as Array<Card>;
+	const decks = [
+		cards.filter((c: Card) => c.row === 0),
+		cards.filter((c: Card) => c.row === 1),
+		cards.filter((c: Card) => c.row === 2)
+	];
+
+	return [
+		{
+			index: 0,
+			reveal: decks[0].splice(0, 4) as [Card, Card, Card, Card],
+			deck: decks[0]
+		},
+		{
+			index: 1,
+			reveal: decks[1].splice(0, 4) as [Card, Card, Card, Card],
+			deck: decks[1]
+		},
+		{
+			index: 2,
+			reveal: decks[2].splice(0, 4) as [Card, Card, Card, Card],
+			deck: decks[2]
+		}
+	];
+}
+
+export const gameCards = createGameCards();

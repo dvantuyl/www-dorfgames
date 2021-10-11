@@ -6,7 +6,8 @@ const gameCtx = {
 	currentPlayerIndex: 0,
 	turn: { tokens: createTokens() },
 	playersRef: null,
-	tokensRef: null
+	tokensRef: null,
+	cardsRef: null
 };
 
 export function createGameCtx(params: Partial<GameCtx> = {}): GameCtx {

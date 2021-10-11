@@ -5,9 +5,9 @@
 	export let cardCount = 0;
 	export let color;
 
-	const borderColor = `fill-current ${ColorClass[color].bd}`;
-	const backgroundColor = `fill-current ${ColorClass[color].bg}`;
-	const textColor = `fill-current ${ColorClass[color].tx}`;
+	const borderColor = `fill-current ${ColorClass[color].text.bd}`;
+	const backgroundColor = `fill-current ${ColorClass[color].text.bg}`;
+	const textColor = `fill-current ${ColorClass[color].text.tx}`;
 </script>
 
 <div class="relative h-full w-full">
