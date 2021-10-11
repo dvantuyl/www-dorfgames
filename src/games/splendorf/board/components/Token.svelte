@@ -1,23 +1,11 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
 	import { ColorClass } from './colorclass';
 
 	export let count = 0;
 	export let color;
-	export let disabled;
-
-	const dispatch = createEventDispatcher();
-
-	function handleClick() {
-		dispatch('click', { color });
-	}
 </script>
 
-<button
-	class="relative h-full w-full transform disabled:scale-90 disabled:opacity-80 disabled:cursor-not-allowed"
-	on:click={handleClick}
-	disabled={disabled(color)}
->
+<div class="relative h-full w-full">
 	<div class="absolute top-0 left-0 w-full h-full">
 		<svg
 			width="100%"
@@ -56,4 +44,4 @@
 			</text>
 		</svg>
 	</div>
-</button>
+</div>
