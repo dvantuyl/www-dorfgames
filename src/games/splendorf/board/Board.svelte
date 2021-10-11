@@ -2,12 +2,12 @@
 	import TokensSection from './sections/TokensSection.svelte';
 	import PlayersSection from './sections/PlayersSection.svelte';
 	import ActionsSection from './sections/ActionsSection.svelte';
-	import type { GameCtx, GameEvent } from '../game/types';
+	import type { GameCtx, GameEvt } from '../game/types';
 	import type { StateMachine } from 'xstate';
 	import GoalsSection from './sections/GoalsSection.svelte';
 	import CardsSection from './sections/CardsSection.svelte';
 
-	export let game: StateMachine<GameCtx, any, GameEvent>;
+	export let game: StateMachine<GameCtx, any, GameEvt>;
 	export let room;
 </script>
 

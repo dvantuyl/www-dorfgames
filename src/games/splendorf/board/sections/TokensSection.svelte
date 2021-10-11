@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { colors } from '../../game/index';
+	import { colors } from '../../game';
 	import Token from '../components/Token.svelte';
 
 	export let game;

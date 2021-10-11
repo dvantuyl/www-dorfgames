@@ -1,25 +1,21 @@
 import type { StateMachine } from 'xstate';
-import type { GameEvent, GameCtx } from '../../types';
+import type { GameEvt, GameCtx } from './types';
 import { createMachine, spawn, assign, forwardTo } from 'xstate';
-import { log, send } from 'xstate/lib/actions';
-import { guards } from './guards';
-import { actions } from './actions';
-import { tokensMachine } from '../tokensMachine';
-import { playersMachine } from '../playersMachine';
-import { tokensInit } from '../..';
+import { log, send } from 'xstate/lib/actions.js';
+import { guards } from './game.guards';
+import { actions } from './game.actions';
+import { tokensMachine } from './tokens';
+import { playersMachine } from './players';
+import { createGameCtx } from './game.model';
 
-export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx, any, GameEvent> {
-	return createMachine<GameCtx, GameEvent>(
+export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx, any, GameEvt> {
+	return createMachine<GameCtx, GameEvt>(
 		{
 			id: 'gameMachine',
 			initial: 'initializing',
-			context: {
-				sessionPlayerId,
-				currentPlayerIndex: 0,
-				turn: { tokens: tokensInit() },
-				playersRef: null,
-				tokensRef: null
-			},
+			context: createGameCtx({
+				sessionPlayerId
+			}),
 			states: {
 				initializing: {
 					entry: assign({

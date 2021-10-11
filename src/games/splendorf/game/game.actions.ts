@@ -1,15 +1,15 @@
+import type { GameEvt, GameCtx } from './types';
 import { assign } from 'xstate';
-import { tokensInit } from '../..';
-import type { GameEvent, GameCtx } from '../../types';
+import { createTokens } from './tokens';
 
 export const actions = {
 	update: assign({
-		currentPlayerIndex: (_, event: GameEvent) => {
+		currentPlayerIndex: (_, event: GameEvt) => {
 			if (event.type !== 'UPDATE') return;
 			return event.game.currentPlayerIndex;
 		}
 	}),
-	publish: (context: GameCtx, event: GameEvent): void => {
+	publish: (context: GameCtx, event: GameEvt): void => {
 		if (event.type !== 'GAME.PUBLISH') return;
 		const { players } = context.playersRef.getSnapshot().context;
 		const { tokens } = context.tokensRef.getSnapshot().context;
@@ -17,7 +17,7 @@ export const actions = {
 		event.callback({ players, tokens, currentPlayerIndex });
 	},
 	selectTurnTokens: assign({
-		turn: (ctx: GameCtx, evt: GameEvent) => {
+		turn: (ctx: GameCtx, evt: GameEvt) => {
 			if (evt.type !== 'TOKENS.SELECT') return ctx.turn;
 			return {
 				...ctx.turn,
@@ -26,11 +26,11 @@ export const actions = {
 		}
 	}),
 	resetTurn: assign({
-		turn: { tokens: tokensInit() }
+		turn: { tokens: createTokens() }
 	}),
 	endTurn: assign({
 		currentPlayerIndex: nextPlayerIndex,
-		turn: { tokens: tokensInit() }
+		turn: { tokens: createTokens() }
 	})
 };
 

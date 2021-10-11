@@ -1,12 +1,11 @@
 import { createMachine, sendUpdate } from 'xstate';
-import { assign, log } from 'xstate/lib/actions';
-import type { StateMachine } from 'xstate';
-import type { PlayersState, PlayersEvent, Users, PlayersCtx } from '../../types';
+import { assign, log } from 'xstate/lib/actions.js';
 import reduce from 'lodash/reduce.js';
+import type { Players, PlayersEvt, Users, PlayersCtx } from '../types';
+import type { StateMachine } from 'xstate/lib/types';
+import { createPlayer } from '.';
 
-import { tokensInit } from '../..';
-
-export const playersMachine: StateMachine<PlayersCtx, any, PlayersEvent> = createMachine({
+export const playersMachine: StateMachine<PlayersCtx, any, PlayersEvt> = createMachine({
 	id: 'players',
 	context: {
 		prev: {},
@@ -55,18 +54,13 @@ export const playersMachine: StateMachine<PlayersCtx, any, PlayersEvent> = creat
 	}
 });
 
-function setup(users: Users): PlayersState {
+function setup(users: Users): Players {
 	return reduce(
 		users,
 		function (result, user, index) {
 			const players = {
 				...result,
-				[user.id]: {
-					index,
-					id: user.id,
-					name: user.alias,
-					tokens: tokensInit()
-				}
+				[user.id]: createPlayer({ index, id: user.id, name: user.alias })
 			};
 			return players;
 		},
@@ -74,7 +68,7 @@ function setup(users: Users): PlayersState {
 	);
 }
 
-function tokensTake(ctx, evt): PlayersState {
+function tokensTake(ctx, evt): Players {
 	return {
 		...ctx.players,
 		[evt.sessionPlayerId]: {

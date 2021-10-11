@@ -1,14 +1,14 @@
+import type { StateMachine } from 'xstate/lib/types';
+import type { Tokens, TokensEvt, Users, TokensCtx } from '../types';
 import { createMachine, sendUpdate } from 'xstate';
-import type { StateMachine } from 'xstate';
-import type { TokensState, TokensEvent, Users, TokensCtx } from '../../types';
-import { assign, log } from 'xstate/lib/actions';
-import { tokensInit } from '../../index';
+import { assign, log } from 'xstate/lib/actions.js';
+import { createTokens } from './tokens.model';
 
-export const tokensMachine: StateMachine<TokensCtx, any, TokensEvent> = createMachine({
+export const tokensMachine: StateMachine<TokensCtx, any, TokensEvt> = createMachine({
 	id: 'tokensMachine',
 	context: {
-		prev: tokensInit(),
-		tokens: tokensInit()
+		prev: createTokens(),
+		tokens: createTokens()
 	},
 	initial: 'waiting',
 	states: {
@@ -56,9 +56,9 @@ export const tokensMachine: StateMachine<TokensCtx, any, TokensEvent> = createMa
 	}
 });
 
-function setup(users: Users): TokensState {
+function setup(users: Users): Tokens {
 	const numPlayers = Object.values(users).length;
-	return tokensInit(numTokens(numPlayers), { go: 5 });
+	return createTokens(numTokens(numPlayers), { go: 5 });
 }
 
 function numTokens(numPlayers: number): number {

@@ -1,13 +1,13 @@
-import type { GameCtx, GameEvent, Player } from '../../types';
+import type { GameCtx, GameEvt, Player } from './types';
 import sum from 'lodash/sum.js';
 import reduce from 'lodash/reduce.js';
-import { Color } from '../..';
+import { Clr } from './colors';
 
 export const guards = {
 	isSessionPlayerTurn: (ctx: GameCtx): boolean => {
 		return sessionPlayer(ctx)?.index === ctx.currentPlayerIndex;
 	},
-	canSelectToken: (ctx: GameCtx, evt: GameEvent): boolean => {
+	canSelectToken: (ctx: GameCtx, evt: GameEvt): boolean => {
 		return (
 			tokensAvailable(ctx, evt) &&
 			tokenIsntGold(evt) &&
@@ -32,15 +32,15 @@ function sessionPlayer(ctx: GameCtx): Player {
 	return players[sessionPlayerId];
 }
 
-function tokensAvailable(ctx: GameCtx, evt: GameEvent): boolean {
+function tokensAvailable(ctx: GameCtx, evt: GameEvt): boolean {
 	if (evt.type !== 'TOKENS.SELECT') return;
 	const tokens = ctx.tokensRef.getSnapshot().context.tokens;
 	return tokens[evt.color] > 0;
 }
 
-function tokenIsntGold(evt: GameEvent): boolean {
+function tokenIsntGold(evt: GameEvt): boolean {
 	if (evt.type !== 'TOKENS.SELECT') return;
-	return evt.color !== Color.go;
+	return evt.color !== Clr.go;
 }
 
 function playerTokensLessThan10(ctx: GameCtx): boolean {
@@ -48,7 +48,7 @@ function playerTokensLessThan10(ctx: GameCtx): boolean {
 	return sum(Object.values(tokens)) < 10;
 }
 
-function selectingDifferentColorToken(ctx: GameCtx, evt: GameEvent): boolean {
+function selectingDifferentColorToken(ctx: GameCtx, evt: GameEvt): boolean {
 	if (evt.type !== 'TOKENS.SELECT') return;
 	const tokens = ctx.turn.tokens;
 	return tokens[evt.color] === 0;
@@ -70,7 +70,7 @@ function lessThan3TokensSelected(ctx: GameCtx): boolean {
 	return sum(Object.values(tokens)) < 3;
 }
 
-function atLeast4TokensAvailable(ctx: GameCtx, evt: GameEvent): boolean {
+function atLeast4TokensAvailable(ctx: GameCtx, evt: GameEvt): boolean {
 	if (evt.type !== 'TOKENS.SELECT') return;
 	const tokens = ctx.tokensRef.getSnapshot().context.tokens;
 	// we need to fudge the 'in a single turn' here by checking >= 3 instead of 4
