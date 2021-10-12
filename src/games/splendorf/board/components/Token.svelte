@@ -5,8 +5,8 @@
 	export let color;
 </script>
 
-<div class="relative h-full w-full">
-	<div class="absolute top-0 left-0 w-full h-full">
+<div class="relative h-full w-auto">
+	<div class="absolute top-0 left-0 w-auto h-full">
 		<svg
 			width="100%"
 			height="100%"
@@ -16,7 +16,7 @@
 			<circle cx="50" cy="50" r="50" />
 		</svg>
 	</div>
-	<div class="absolute top-0 left-0 w-full h-full">
+	<div class="absolute top-0 left-0 w-auto h-full">
 		<svg
 			width="100%"
 			height="100%"
@@ -26,7 +26,7 @@
 			<circle cx="50" cy="50" r="40" />
 		</svg>
 	</div>
-	<div class="absolute top-0 left-0 w-full h-full">
+	<div class="absolute top-0 left-0 w-auto h-full">
 		<svg
 			height="100%"
 			width="100%"

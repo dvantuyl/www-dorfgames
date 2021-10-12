@@ -10,5 +10,7 @@
 
 <Deck count={row.deck.length} />
 {#each row.reveal as card}
-	<Card {card} />
+	<div class="w-full h-full">
+		<Card {...card} />
+	</div>
 {/each}
