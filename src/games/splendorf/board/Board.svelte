@@ -12,22 +12,34 @@
 	export let room;
 </script>
 
-<div class="w-auto h-full grid grid-cols-7 grid-rows-10">
-	<div class="row-span-2 col-span-7">
+<div class="w-auto h-full board">
+	<div style="grid-area: players">
 		<PlayersSection {game} />
 	</div>
-	<div class="col-span-6">
+	<div style="grid-area: goals">
 		<GoalsSection />
 	</div>
-	<div class="row-span-6">
+	<div style="grid-area: tokens">
 		<TokensSection {game} />
 	</div>
-	<div class="row-span-5 col-span-6">
+	<div style="grid-area: cards">
 		<CardsSection {game} />
 	</div>
-	<div class="col-span-7">
+	<div style="grid-area: actions">
 		<ActionsSection {game} {room} />
 	</div>
 </div>
 
 <!-- <CardModal /> -->
+<style>
+	.board {
+		display: grid;
+		grid-template-columns: 10fr 2fr;
+		grid-template-rows: minmax(0 4fr) 2fr 9fr 2fr;
+		grid-template-areas:
+			'players players'
+			'goals tokens'
+			'cards tokens'
+			'actions actions';
+	}
+</style>

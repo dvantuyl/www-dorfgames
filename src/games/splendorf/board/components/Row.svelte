@@ -8,9 +8,11 @@
 	$: row = $game.context.cardsRef.getSnapshot().context.cards[index];
 </script>
 
-<Deck count={row.deck.length} />
+<div>
+	<Deck count={row.deck.length} />
+</div>
 {#each row.reveal as card}
-	<div class="w-full h-full">
+	<div>
 		<Card {...card} />
 	</div>
 {/each}
