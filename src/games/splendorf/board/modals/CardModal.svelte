@@ -40,7 +40,7 @@
         To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
     -->
 		<div
-			class="inline-block bg-white rounded-lg overflow-hidden shadow-xl transform transition-all align-middle sm:max-w-sm w-full"
+			class="inline-block rounded-lg  overflow-hidden shadow-xl transform transition-all align-middle sm:max-w-sm w-full"
 		>
 			<Card clr="gr" pts="4" cost={{ re: 2, gr: 1, bl: 4, bk: 5, wh: 2 }} />
 		</div>

@@ -7,7 +7,7 @@
 </script>
 
 <div class="mx-auto aspect-w-2 aspect-h-3 rounded-full ">
-	<div class="w-full h-full rounded flex p-2 {ColorClass[clr].bg}">
+	<div class="w-full h-full rounded-lg flex p-2 {ColorClass[clr].bg}">
 		<div class="w-1/2 h-full flex flex-col justify-end">
 			{#each Object.entries(cost) as cost}
 				{#if cost[1]}

@@ -35,7 +35,8 @@
 	</div>
 </div>
 
-<!-- <CardModal /> -->
+<CardModal />
+
 <style>
 	/* MOBILE LAYOUT */
 	.board {
