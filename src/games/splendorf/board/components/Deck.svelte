@@ -2,7 +2,7 @@
 	export let count;
 </script>
 
-<div class="mx-auto aspect-w-2 aspect-h-3 rounded-full">
+<div class="h-full sm:aspect-w-2 sm:aspect-h-3 rounded-full">
 	<div class="w-full h-full rounded bg-red-600">
 		<div class="w-full h-full opacity-50">
 			<svg height="100%" width="100%" viewBox="0 0 100 100" class="fill-current text-black">

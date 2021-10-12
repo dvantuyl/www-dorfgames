@@ -1,10 +1,20 @@
 <script>
-	import Row from '../components/Row.svelte';
+	import Deck from '../components/Deck.svelte';
+	import Card from '../components/Card.svelte';
+
 	export let game;
+	export let row;
+
+	$: cards = $game.context.cardsRef.getSnapshot().context.cards[row];
 </script>
 
-<div class="w-full h-full bg-red-400 grid grid-cols-5">
-	<Row index={2} {game} />
-	<Row index={1} {game} />
-	<Row index={0} {game} />
+<div style="grid-area: R${row}D">
+	<Deck count={cards.deck.length} />
 </div>
+{#each [0, 1, 2, 3] as i}
+	<div style="grid-area: R${row}${i}">
+		<div class="w-full h-full max-w-xs">
+			<Card {...cards.reveal[i]} />
+		</div>
+	</div>
+{/each}

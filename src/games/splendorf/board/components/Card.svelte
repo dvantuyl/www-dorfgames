@@ -12,7 +12,7 @@
 			{#each Object.entries(cost) as cost}
 				{#if cost[1]}
 					<div class="h-1/5 w-full">
-						<div class="h-full py-1">
+						<div class="h-full py-[5%]">
 							<Token color={cost[0]} count={cost[1]} />
 						</div>
 					</div>

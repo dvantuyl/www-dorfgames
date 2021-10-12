@@ -15,15 +15,13 @@
 	}
 </script>
 
-<div class="w-full h-full flex flex-col items-center">
-	{#each colors as color}
-		<button
-			class="h-full w-full transform disabled:scale-90 disabled:opacity-80 disabled:cursor-not-allowed"
-			value={color}
-			on:click={() => handleClick(color)}
-			disabled={disabled(color)}
-		>
-			<Token count={tokens[color]} {color} />
-		</button>
-	{/each}
-</div>
+{#each colors as color}
+	<button
+		class="h-full w-full transform disabled:scale-90 disabled:opacity-80 disabled:cursor-not-allowed"
+		value={color}
+		on:click={() => handleClick(color)}
+		disabled={disabled(color)}
+	>
+		<Token count={tokens[color]} {color} />
+	</button>
+{/each}
