@@ -2,11 +2,11 @@
 	import TokensSection from './sections/TokensSection.svelte';
 	import PlayersSection from './sections/PlayersSection.svelte';
 	import ActionsSection from './sections/ActionsSection.svelte';
-	import type { GameCtx, GameEvt } from '../game/types';
+	import type { GameCtx, GameEvt } from '../game';
 	import type { StateMachine } from 'xstate';
 	import GoalsSection from './sections/GoalsSection.svelte';
 	import CardsSection from './sections/CardsSection.svelte';
-	import CardModal from './modals/CardModal.svelte';
+	import CardViewer from './modals/CardViewer.svelte';
 
 	export let game: StateMachine<GameCtx, any, GameEvt>;
 	export let room;
@@ -35,7 +35,7 @@
 	</div>
 </div>
 
-<CardModal />
+<CardViewer />
 
 <style>
 	/* MOBILE LAYOUT */
