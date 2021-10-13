@@ -1,4 +1,4 @@
-import type { Color, Card, GameCards } from '../types';
+import type { Color, Card, Cards } from '../types';
 import shuffle from 'lodash/shuffle.js';
 import { Clr } from '../colors';
 
@@ -120,7 +120,7 @@ const createCard = (
 	cost: { bk, wh, re, bl, gr, go }
 });
 
-function createGameCards(): GameCards {
+function createCards(): Cards {
 	const cards = shuffle(cardTable.map((c, i) => createCard(i, ...c))) as Array<Card>;
 	const decks = [
 		cards.filter((c: Card) => c.row === 0),
@@ -147,4 +147,4 @@ function createGameCards(): GameCards {
 	];
 }
 
-export const gameCards = createGameCards();
+export const cards = createCards();

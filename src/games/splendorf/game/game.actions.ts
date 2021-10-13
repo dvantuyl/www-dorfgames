@@ -1,4 +1,4 @@
-import type { GameEvt, GameCtx } from './types';
+import type { GameEvt, GameCtx } from './game.machine';
 import { assign } from 'xstate';
 import { createTokens } from './tokens';
 

@@ -1,9 +1,20 @@
 import { createMachine, sendUpdate } from 'xstate';
 import { assign, log } from 'xstate/lib/actions.js';
 import reduce from 'lodash/reduce.js';
-import type { Players, PlayersEvt, Users, PlayersCtx } from '../types';
+import type { Game, Color, Players, Users } from '../types';
 import type { StateMachine } from 'xstate/lib/types';
 import { createPlayer } from '.';
+
+export interface PlayersCtx {
+	prev: Players;
+	players: Players;
+}
+
+export type PlayersEvt =
+	| { type: 'SETUP'; users: Users }
+	| { type: 'UPDATE'; game: Game }
+	| { type: 'GAME.RESET_TURN' }
+	| { type: 'TOKENS.SELECT'; color: Color; sessionPlayerId: string };
 
 export const playersMachine: StateMachine<PlayersCtx, any, PlayersEvt> = createMachine({
 	id: 'players',

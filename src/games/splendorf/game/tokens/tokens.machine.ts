@@ -1,8 +1,19 @@
 import type { StateMachine } from 'xstate/lib/types';
-import type { Tokens, TokensEvt, Users, TokensCtx } from '../types';
+import type { Game, Color, Tokens, Users } from '../types';
 import { createMachine, sendUpdate } from 'xstate';
 import { assign, log } from 'xstate/lib/actions.js';
 import { createTokens } from './tokens.model';
+
+export interface TokensCtx {
+	prev: Tokens;
+	tokens: Tokens;
+}
+
+export type TokensEvt =
+	| { type: 'SETUP'; users: Users }
+	| { type: 'UPDATE'; game: Game }
+	| { type: 'GAME.RESET_TURN' }
+	| { type: 'TOKENS.SELECT'; color: Color };
 
 export const tokensMachine: StateMachine<TokensCtx, any, TokensEvt> = createMachine({
 	id: 'tokensMachine',

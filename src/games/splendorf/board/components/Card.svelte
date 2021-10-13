@@ -1,6 +1,7 @@
 <script>
 	import { ColorClass } from './colorclass';
 	import Token from './Token.svelte';
+
 	export let clr;
 	export let pts;
 	export let cost;

@@ -1,14 +1,26 @@
 import type { StateMachine } from 'xstate/lib/types';
-import type { CardsEvt, CardsCtx } from '../types';
+import type { Cards, Game } from '../types';
 import { createMachine, sendUpdate } from 'xstate';
 import { assign, log, send } from 'xstate/lib/actions.js';
-import { gameCards } from './cards.model';
+import { cards } from './cards.model';
+
+export interface CardsCtx {
+	prev: Cards;
+	cards: Cards;
+}
+
+export type CardsEvt =
+	| { type: 'SETUP' }
+	| { type: 'UPDATE'; game: Game }
+	| { type: 'GAME.RESET_TURN' }
+	| { type: 'CARDS.BUY'; row: number; id: number }
+	| { type: 'CARDS.HOLD'; row: number; id: number };
 
 export const cardsMachine: StateMachine<CardsCtx, any, CardsEvt> = createMachine({
 	id: 'cardsMachine',
 	context: {
-		prev: gameCards,
-		cards: gameCards
+		prev: cards,
+		cards
 	},
 	initial: 'waiting',
 	states: {
@@ -17,8 +29,8 @@ export const cardsMachine: StateMachine<CardsCtx, any, CardsEvt> = createMachine
 				SETUP: {
 					target: 'updatingGame',
 					actions: assign({
-						prev: gameCards,
-						cards: gameCards
+						prev: cards,
+						cards
 					})
 				},
 				UPDATE: {
