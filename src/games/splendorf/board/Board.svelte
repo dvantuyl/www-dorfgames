@@ -12,31 +12,32 @@
 	export let room;
 </script>
 
-<div class="sm:max-w-6xl mx-auto">
-	<div class="board w-auto h-full grid gap-1 sm:gap-3">
-		<div style="grid-area: PLR">
-			<PlayersSection {game} />
-		</div>
-		<div style="grid-area: GOL">
-			<GoalsSection />
-		</div>
-		<div
-			class="grid gap-1 grid-flow-col auto-cols-1fr sm:gap-3 sm:grid-flow-row sm:auto-rows-1fr"
-			style="grid-area: TKN"
-		>
-			<TokensSection {game} />
-		</div>
-		<CardsSection {game} row={2} />
-		<CardsSection {game} row={1} />
-		<CardsSection {game} row={0} />
-		<div style="grid-area: ACT">
-			<ActionsSection {game} {room} />
+<div class="w-full h-full bg-warmGray-600">
+	<div class="sm:max-w-6xl mx-auto">
+		<div class="board w-auto h-full grid gap-1 sm:gap-3">
+			<div style="grid-area: PLR">
+				<PlayersSection {game} />
+			</div>
+			<div style="grid-area: GOL">
+				<GoalsSection />
+			</div>
+			<div
+				class="grid gap-1 grid-flow-col auto-cols-1fr sm:gap-3 sm:grid-flow-row sm:auto-rows-1fr"
+				style="grid-area: TKN"
+			>
+				<TokensSection {game} />
+			</div>
+			<CardsSection {game} row={2} />
+			<CardsSection {game} row={1} />
+			<CardsSection {game} row={0} />
+			<div style="grid-area: ACT">
+				<ActionsSection {game} {room} />
+			</div>
 		</div>
 	</div>
 </div>
 
-<CardViewer />
-
+<!-- <CardViewer /> -->
 <style>
 	/* MOBILE LAYOUT */
 	.board {

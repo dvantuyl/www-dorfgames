@@ -22,6 +22,6 @@
 		on:click={() => handleClick(color)}
 		disabled={disabled(color)}
 	>
-		<Token count={tokens[color]} {color} style="transform skew-y-6 skew-x-6 -rotate-3" />
+		<Token count={tokens[color]} {color} />
 	</button>
 {/each}

@@ -2,19 +2,19 @@ import { Clr } from '../../game';
 
 export const ColorClass = {};
 ColorClass[Clr.bk] = {
-	bg: 'bg-gray-700',
+	bg: 'bg-warmGray-700',
 	text: {
-		bd: 'text-gray-600',
-		bg: 'text-gray-700',
-		tx: 'text-gray-400'
+		bd: 'text-warmGray-600',
+		bg: 'text-warmGray-700',
+		tx: 'text-warmGray-400'
 	}
 };
 ColorClass[Clr.wh] = {
-	bg: 'bg-gray-200',
+	bg: 'bg-warmGray-200',
 	text: {
-		bd: 'text-gray-300',
-		bg: 'text-gray-200',
-		tx: 'text-gray-500'
+		bd: 'text-warmGray-300',
+		bg: 'text-warmGray-200',
+		tx: 'text-warmGray-500'
 	}
 };
 ColorClass[Clr.re] = {
@@ -26,26 +26,26 @@ ColorClass[Clr.re] = {
 	}
 };
 ColorClass[Clr.bl] = {
-	bg: 'bg-blue-600',
+	bg: 'bg-sky-600',
 	text: {
-		bd: 'text-blue-500',
-		bg: 'text-blue-600',
-		tx: 'text-gray-300'
+		bd: 'text-sky-500',
+		bg: 'text-sky-600',
+		tx: 'text-sky-300'
 	}
 };
 ColorClass[Clr.gr] = {
-	bg: 'bg-green-600',
+	bg: 'bg-teal-600',
 	text: {
-		bd: 'text-green-500',
-		bg: 'text-green-600',
-		tx: 'text-green-300'
+		bd: 'text-teal-500',
+		bg: 'text-teal-600',
+		tx: 'text-teal-300'
 	}
 };
 ColorClass[Clr.go] = {
-	bg: 'bg-yellow-600',
+	bg: 'bg-amber-600',
 	text: {
-		bd: 'text-yellow-500',
-		bg: 'text-yellow-600',
-		tx: 'text-yellow-300'
+		bd: 'text-amber-500',
+		bg: 'text-amber-600',
+		tx: 'text-amber-300'
 	}
 };
