@@ -35,7 +35,7 @@
 							type="button"
 							class="inline-flex items-center px-6 py-3 border border-transparent text-lg font-semibold rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
 						>
-							<i>pan_tool</i>&nbsp<span>HOLD</span>
+							<i>pan_tool</i>&nbsp&nbsp<span>HOLD</span>
 						</button>
 						<button
 							type="button"
@@ -46,9 +46,9 @@
 					</div>
 					<button
 						type="button"
-						class="h-16 w-16 inline-flex justify-center items-center border-white border-4 border-opacity-70 rounded-full shadow-sm "
+						class="h-16 w-16 inline-flex justify-center items-center border-white border-4 border-opacity-70 rounded-full opacity-80 shadow-sm hover:border-opacity-90 focus:opacity-90"
 					>
-						<i class="block text-5xl text-white font-semibold opacity-80  ">clear</i>
+						<i class="block text-5xl text-white font-semibold">clear</i>
 					</button>
 				</div>
 				<button value="prev"

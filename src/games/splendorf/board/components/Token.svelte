@@ -3,9 +3,10 @@
 
 	export let count = 0;
 	export let color;
+	export let style = '';
 </script>
 
-<div class="relative h-full w-auto">
+<div class="relative h-full w-auto ${style}">
 	<div class="absolute top-0 left-0 w-auto h-full">
 		<svg
 			width="100%"
