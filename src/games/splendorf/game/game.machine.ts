@@ -3,12 +3,14 @@ import type { Tokens, Users, Game, Color } from './types';
 import type { PlayersCtx, PlayersEvt } from './players/players.machine';
 import type { TokensCtx, TokensEvt } from './tokens';
 import type { CardsCtx, CardsEvt } from './cards';
+import type { CardViewerCtx, CardViewerEvt } from './cardViewer';
 import { createMachine, spawn, forwardTo, send, assign } from 'xstate';
 import { guards } from './game.guards';
 import { actions } from './game.actions';
 import { tokensMachine, createTokens } from './tokens';
 import { playersMachine } from './players';
 import { cardsMachine } from './cards';
+import { cardViewerMachine } from './cardViewer';
 
 export interface GameCtx {
 	sessionPlayerId: string;
@@ -38,6 +40,14 @@ export interface GameCtx {
 			context: CardsCtx;
 		}
 	>;
+	cardViewerRef: ActorRefWithDeprecatedState<
+		CardViewerCtx,
+		CardViewerEvt,
+		{
+			value: any;
+			context: CardViewerCtx;
+		}
+	>;
 }
 
 export type GameEvt =
@@ -60,14 +70,16 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 				turn: { tokens: createTokens() },
 				playersRef: null,
 				tokensRef: null,
-				cardsRef: null
+				cardsRef: null,
+				cardViewerRef: null
 			},
 			states: {
 				initializing: {
 					entry: assign({
 						playersRef: () => spawn(playersMachine, 'players'),
 						tokensRef: () => spawn(tokensMachine, 'tokens'),
-						cardsRef: () => spawn(cardsMachine, 'cards')
+						cardsRef: () => spawn(cardsMachine, 'cards'),
+						cardViewerRef: () => spawn(cardViewerMachine, 'cardViewer')
 					}),
 					on: {
 						SETUP: {
@@ -93,7 +105,7 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 					on: {
 						UPDATE: {
 							target: 'waitingTurn',
-							actions: ['update', forwardTo('players'), forwardTo('tokens')]
+							actions: ['update', forwardTo('players'), forwardTo('tokens'), forwardTo('cards')]
 						}
 					}
 				},

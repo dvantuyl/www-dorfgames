@@ -7,6 +7,10 @@
 	export let row;
 
 	$: cards = $game.context.cardsRef.getSnapshot().context.cards[row];
+
+	function handleClick(index) {
+		$game.context.cardViewerRef.send('CARD_VIEWER.OPEN', { cards: cards.reveal, index });
+	}
 </script>
 
 <div style="grid-area: R${row}D">
@@ -14,8 +18,8 @@
 </div>
 {#each cards.reveal as card, i}
 	<div style="grid-area: R${row}${i}">
-		<div class="w-full h-full max-w-xs">
+		<button class="w-full h-full max-w-xs" on:click={() => handleClick(i)}>
 			<Card {...pick(card, ['clr', 'pts', 'cost'])} />
-		</div>
+		</button>
 	</div>
 {/each}

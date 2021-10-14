@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
+	import type { Color } from '../../game/types';
 	import { ColorClass } from './colorclass';
 
 	export let tokenCount = 0;
 	export let cardCount = 0;
-	export let color;
+	export let color: Color;
 
 	const borderColor = `fill-current ${ColorClass[color].text.bd}`;
 	const backgroundColor = `fill-current ${ColorClass[color].text.bg}`;

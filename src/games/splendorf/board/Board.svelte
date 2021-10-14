@@ -10,6 +10,8 @@
 
 	export let game: StateMachine<GameCtx, any, GameEvt>;
 	export let room;
+
+	//game.
 </script>
 
 <div class="w-full h-full bg-warmGray-600">
@@ -37,7 +39,8 @@
 	</div>
 </div>
 
-<!-- <CardViewer /> -->
+<CardViewer {game} />
+
 <style>
 	/* MOBILE LAYOUT */
 	.board {

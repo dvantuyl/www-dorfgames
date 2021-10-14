@@ -4,7 +4,7 @@ export const ColorClass = {};
 ColorClass[Clr.bk] = {
 	bg: 'bg-warmGray-700',
 	text: {
-		bd: 'text-warmGray-600',
+		bd: 'text-warmGray-500',
 		bg: 'text-warmGray-700',
 		tx: 'text-warmGray-400'
 	}

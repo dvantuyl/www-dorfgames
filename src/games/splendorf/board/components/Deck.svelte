@@ -3,7 +3,7 @@
 </script>
 
 <div class="h-full sm:aspect-w-2 sm:aspect-h-3 rounded-full">
-	<div class="w-full h-full rounded-lg bg-red-600">
+	<div class="w-full h-full">
 		<div class="w-full h-full opacity-40">
 			<svg height="100%" width="100%" viewBox="0 0 100 100" class="fill-current text-white">
 				<text
