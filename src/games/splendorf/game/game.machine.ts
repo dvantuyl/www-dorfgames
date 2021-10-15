@@ -1,5 +1,5 @@
 import type { ActorRefWithDeprecatedState, StateMachine } from 'xstate';
-import type { Tokens, Users, Game, Color } from './types';
+import type { Tokens, Users, Game, Color, Card } from './types';
 import type { PlayersCtx, PlayersEvt } from './players/players.machine';
 import type { TokensCtx, TokensEvt } from './tokens';
 import type { CardsCtx, CardsEvt } from './cards';
@@ -54,7 +54,7 @@ export type GameEvt =
 	| { type: 'SETUP'; users: Users }
 	| { type: 'UPDATE'; game: Game }
 	| { type: 'TOKENS.SELECT'; color: Color }
-	| { type: 'CARDS.SELECT'; row: number; id: number }
+	| { type: 'CARDS.BUY'; card: Card; index: number }
 	| { type: 'GAME.PUBLISH'; callback: (game: Game) => void }
 	| { type: 'GAME.END_TURN'; callback: (game: Game) => void }
 	| { type: 'GAME.RESET_TURN' };
@@ -84,11 +84,16 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 					on: {
 						SETUP: {
 							target: 'waitingToPublish',
-							actions: [forwardTo('players'), forwardTo('tokens'), forwardTo('cards')]
+							actions: [forwardTo('players'), forwardTo('cards'), forwardTo('tokens')]
 						},
 						UPDATE: {
 							target: 'waitingTurn',
-							actions: ['update', forwardTo('players'), forwardTo('tokens'), forwardTo('cards')]
+							actions: [
+								'updatePlayerTurn',
+								forwardTo('players'),
+								forwardTo('cards'),
+								forwardTo('tokens')
+							]
 						}
 					}
 				},
@@ -105,7 +110,12 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 					on: {
 						UPDATE: {
 							target: 'waitingTurn',
-							actions: ['update', forwardTo('players'), forwardTo('tokens'), forwardTo('cards')]
+							actions: [
+								'updatePlayerTurn',
+								forwardTo('players'),
+								forwardTo('cards'),
+								forwardTo('tokens')
+							]
 						}
 					}
 				},
@@ -116,9 +126,14 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 							target: 'selectingTokens',
 							cond: 'canSelectToken'
 						},
-						'GAME.END_TURN': {
-							target: 'waitingToPublish',
-							actions: ['endTurn']
+						'CARDS.BUY': {
+							actions: [
+								forwardTo('players'),
+								forwardTo('cards'),
+								forwardTo('tokens'),
+								send({ type: 'CARD_VIEWER.CLOSE' }, { to: 'cardViewer' })
+							],
+							target: 'buyingCard'
 						}
 					}
 				},
@@ -136,7 +151,19 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 						},
 						'GAME.RESET_TURN': {
 							target: 'takingTurn',
-							actions: ['resetTurn', forwardTo('players'), forwardTo('tokens')]
+							actions: ['resetTurn', forwardTo('players'), forwardTo('cards'), forwardTo('tokens')]
+						},
+						'GAME.END_TURN': {
+							target: 'waitingToPublish',
+							actions: ['endTurn']
+						}
+					}
+				},
+				buyingCard: {
+					on: {
+						'GAME.RESET_TURN': {
+							target: 'takingTurn',
+							actions: ['resetTurn', forwardTo('players'), forwardTo('cards'), forwardTo('tokens')]
 						},
 						'GAME.END_TURN': {
 							target: 'waitingToPublish',
