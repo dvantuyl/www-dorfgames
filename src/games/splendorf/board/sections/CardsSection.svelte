@@ -14,7 +14,7 @@
 </script>
 
 <div style="grid-area: R${row}D">
-	<Deck count={cards.deck.length} />
+	<Deck count={cards.deck.length} {row} />
 </div>
 {#each cards.reveal as card, i}
 	<div style="grid-area: R${row}${i}">
