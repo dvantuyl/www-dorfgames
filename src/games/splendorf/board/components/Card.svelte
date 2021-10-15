@@ -5,12 +5,14 @@
 	export let clr;
 	export let pts;
 	export let cost;
+
+	$: costs = Object.entries(cost).sort((a, b) => b[1] - a[1]);
 </script>
 
 <div class="mx-auto aspect-w-2 aspect-h-3 rounded-lg">
 	<div class="w-full h-full rounded-lg flex p-2 {ColorClass[clr].bg}">
 		<div class="w-1/2 h-full flex flex-col justify-end">
-			{#each Object.entries(cost) as cost}
+			{#each costs as cost}
 				{#if cost[1]}
 					<div class="h-1/5 w-full">
 						<div class="h-full py-[5%]">
