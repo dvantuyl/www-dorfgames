@@ -1,6 +1,7 @@
 import type { StateMachine } from 'xstate/lib/types';
 import type { Card, Cards, Game } from '../types';
 import { createMachine, sendUpdate } from 'xstate';
+import { cloneDeep } from 'lodash';
 import { assign } from 'xstate/lib/actions.js';
 import { cards } from './cards.model';
 import { actions } from './cards.actions';
@@ -23,8 +24,8 @@ export const cardsMachine: StateMachine<CardsCtx, any, CardsEvt> = createMachine
 	{
 		id: 'cardsMachine',
 		context: {
-			prev: { ...cards },
-			cards: { ...cards }
+			prev: cards,
+			cards: cards
 		},
 		initial: 'waiting',
 		states: {
@@ -33,37 +34,26 @@ export const cardsMachine: StateMachine<CardsCtx, any, CardsEvt> = createMachine
 					SETUP: {
 						target: 'updatingGame',
 						actions: assign({
-							prev: { ...cards },
-							cards: { ...cards }
+							prev: cloneDeep(cards),
+							cards: cloneDeep(cards)
 						})
 					},
 					UPDATE: {
 						target: 'updatingGame',
-						actions: [
-							assign({
-								prev: (_, event) => event.game.cards,
-								cards: (_, event) => event.game.cards
-							}),
-							(ctx, evt) =>
-								console.log('GAME.RESET_TURN', ctx.prev[0].reveal[0], ctx.cards[0].reveal[0])
-						]
+						actions: assign({
+							prev: (_, event) => cloneDeep(event.game.cards),
+							cards: (_, event) => cloneDeep(event.game.cards)
+						})
 					},
 					'GAME.RESET_TURN': {
 						target: 'updatingGame',
-						actions: [
-							assign({
-								cards: (ctx) => ({ ...ctx.prev })
-							}),
-							(ctx, evt) =>
-								console.log('GAME.RESET_TURN', ctx.prev[0].reveal[0], ctx.cards[0].reveal[0])
-						]
+						actions: assign({
+							cards: (ctx) => cloneDeep(ctx.prev)
+						})
 					},
 					'CARDS.BUY': {
 						target: 'updatingGame',
-						actions: [
-							'buy',
-							(ctx, evt) => console.log('CARDS.BUY', ctx.prev[0].reveal[0], ctx.cards[0].reveal[0])
-						]
+						actions: 'buy'
 					}
 				}
 			},

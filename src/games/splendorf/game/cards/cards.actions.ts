@@ -1,5 +1,6 @@
 import type { CardsCtx, CardsEvt } from './cards.machine';
 import type { Cards } from '../types';
+import { cloneDeep } from 'lodash';
 import { assign } from 'xstate';
 
 export const actions = {
@@ -13,5 +14,5 @@ function buy(ctx: CardsCtx, evt: CardsEvt): Cards {
 
 	const row = ctx.cards[evt.card.row];
 	row.reveal[evt.index] = row.deck.pop();
-	return ctx.cards;
+	return cloneDeep(ctx.cards);
 }
