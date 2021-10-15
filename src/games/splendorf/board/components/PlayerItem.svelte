@@ -19,7 +19,11 @@
 	</div>
 	{#each colors as color}
 		<div class="w-full sm:w-1/6 h-full">
-			<TokenCard cardCount={0} tokenCount={player.tokens[color]} {color} />
+			<TokenCard
+				cardCount={player.cards[color]?.length || 0}
+				tokenCount={player.tokens[color]}
+				{color}
+			/>
 		</div>
 	{/each}
 </div>

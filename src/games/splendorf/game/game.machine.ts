@@ -84,13 +84,21 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 					on: {
 						SETUP: {
 							target: 'waitingToPublish',
-							actions: [forwardTo('players'), forwardTo('cards'), forwardTo('tokens')]
+							actions: [
+								send((ctx, evt) => ({ ...evt, sessionPlayerId: ctx.sessionPlayerId }), {
+									to: 'players'
+								}),
+								forwardTo('cards'),
+								forwardTo('tokens')
+							]
 						},
 						UPDATE: {
 							target: 'waitingTurn',
 							actions: [
 								'updatePlayerTurn',
-								forwardTo('players'),
+								send((ctx, evt) => ({ ...evt, sessionPlayerId: ctx.sessionPlayerId }), {
+									to: 'players'
+								}),
 								forwardTo('cards'),
 								forwardTo('tokens')
 							]
@@ -122,11 +130,12 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 				takingTurn: {
 					on: {
 						'TOKENS.SELECT': {
+							cond: 'canSelectToken',
 							actions: send((_, evt) => ({ ...evt })),
-							target: 'selectingTokens',
-							cond: 'canSelectToken'
+							target: 'selectingTokens'
 						},
 						'CARDS.BUY': {
+							cond: 'canBuyCard',
 							actions: [
 								forwardTo('players'),
 								forwardTo('cards'),
@@ -141,13 +150,7 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 					on: {
 						'TOKENS.SELECT': {
 							cond: 'canSelectToken',
-							actions: [
-								'selectTurnTokens',
-								forwardTo('tokens'),
-								send((ctx, evt) => ({ ...evt, sessionPlayerId: ctx.sessionPlayerId }), {
-									to: 'players'
-								})
-							]
+							actions: ['selectTurnTokens', forwardTo('tokens'), forwardTo('players')]
 						},
 						'GAME.RESET_TURN': {
 							target: 'takingTurn',

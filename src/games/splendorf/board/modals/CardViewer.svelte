@@ -12,6 +12,7 @@
 	$: card = cardViewer.context.cards[index];
 	$: disablePrev = !cardViewer.can({ type: 'CARD_VIEWER.PREV' });
 	$: disableNext = !cardViewer.can({ type: 'CARD_VIEWER.NEXT' });
+	$: disableBuy = !$game.can({ type: 'CARDS.BUY', card, index });
 
 	function handleClose() {
 		$game.context.cardViewerRef.send('CARD_VIEWER.CLOSE');
@@ -51,7 +52,7 @@
 			>
 				<div class="flex items-center">
 					<button
-						class="disabled:opacity-0"
+						class="disabled:opacity-0 disabled:cursor-default"
 						value="prev"
 						on:click={handlePrev}
 						disabled={disablePrev}
@@ -64,14 +65,15 @@
 						<div class="flex justify-around py-5 w-full">
 							<button
 								type="button"
-								class="inline-flex items-center px-6 py-3 border border-transparent text-lg font-semibold rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+								class="inline-flex items-center px-6 py-3 border border-transparent text-lg font-semibold rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-0 disabled:cursor-default"
 							>
 								<i>pan_tool</i>&nbsp&nbsp<span>HOLD</span>
 							</button>
 							<button
 								type="button"
-								class="inline-flex items-center px-6 py-3 border border-transparent text-lg font-semibold rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+								class="inline-flex items-center px-6 py-3 border border-transparent text-lg font-semibold rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-0 disabled:cursor-default"
 								on:click={handleBuy}
+								disabled={disableBuy}
 							>
 								<i>attach_money</i>&nbsp<span>BUY</span>
 							</button>
@@ -85,7 +87,7 @@
 						</button>
 					</div>
 					<button
-						class="disabled:opacity-0"
+						class="disabled:opacity-0 disabled:cursor-default"
 						value="next"
 						on:click={handleNext}
 						disabled={disableNext}
