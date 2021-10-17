@@ -3,12 +3,10 @@ import { send, assign } from 'xstate';
 export const turnStates = {
 	initial: 'startingTurn',
 	states: {
-		startingTurn: {
+		takingTurn: {
 			on: {
-				CAN_SELECT_TOKEN: {
-					// cond: 'canSelectToken'
-				},
 				SELECT_TOKEN: {
+					cond: 'canSelectTokens',
 					actions: [
 						(ctx, evt) => console.log('startingTurn, SELECT_TOKEN', evt),
 						send((_, evt) => ({ ...evt }))
@@ -19,10 +17,8 @@ export const turnStates = {
 		},
 		selectingTokens: {
 			on: {
-				CAN_SELECT_TOKEN: {
-					cond: 'canSelectToken'
-				},
 				SELECT_TOKEN: {
+					cond: 'canSelectToken',
 					actions: 'selectToken'
 				},
 				RESET_TURN: {

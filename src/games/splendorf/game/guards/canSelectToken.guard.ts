@@ -44,12 +44,12 @@ export function canSelectToken(ctx: GameCtx, evt: GameEvt): boolean {
 }
 
 function tokensAvailable(ctx: GameCtx, evt: GameEvt): boolean {
-	if (evt.type !== 'CAN_SELECT_TOKEN') return;
+	if (evt.type !== 'SELECT_TOKEN') return;
 	return ctx.tokens[evt.color] > 0;
 }
 
 function tokenIsntGold(evt: GameEvt): boolean {
-	if (evt.type !== 'CAN_SELECT_TOKEN') return;
+	if (evt.type !== 'SELECT_TOKEN') return;
 	return evt.color !== Clr.go;
 }
 
@@ -59,7 +59,7 @@ function playerTokensLessThan10(ctx: GameCtx): boolean {
 }
 
 function selectingDifferentColorToken(ctx: GameCtx, evt: GameEvt): boolean {
-	if (evt.type !== 'CAN_SELECT_TOKEN') return;
+	if (evt.type !== 'SELECT_TOKEN') return;
 	const tokens = ctx.turn.selectedTokens;
 	return tokens[evt.color] === 0;
 }
@@ -81,7 +81,7 @@ function lessThan3TokensSelected(ctx: GameCtx): boolean {
 }
 
 function atLeast4TokensAvailable(ctx: GameCtx, evt: GameEvt): boolean {
-	if (evt.type !== 'CAN_SELECT_TOKEN') return;
+	if (evt.type !== 'SELECT_TOKEN') return;
 	// we need to fudge the 'in a single turn' here by checking >= 3 instead of 4
 	return ctx.tokens[evt.color] >= 3;
 }

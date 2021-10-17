@@ -1,6 +1,6 @@
 import type { StateMachine } from 'xstate';
 import type { Tokens, Users, Game, Players, Color, Card, Turn } from './types';
-import { createMachine } from 'xstate';
+import { createMachine, send } from 'xstate';
 import { createTokens } from './models';
 import * as actions from './actions';
 import * as guards from './guards';
@@ -21,6 +21,7 @@ export type GameEvt =
 	| { type: 'SELECT_TOKEN'; color: any }
 	| { type: 'BUY_CARD'; card: Card; index: number }
 	| { type: 'HOLD_CARD'; card: Card; index: number }
+	| { type: 'END_TURN' }
 	| { type: 'RESET_TURN' };
 
 export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx, any, GameEvt> {
@@ -66,8 +67,38 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 					}
 				},
 				takingTurn: {
-					...turnStates,
-					onDone: 'waitingToPublish'
+					on: {
+						SELECT_TOKEN: {
+							cond: 'canSelectToken',
+							actions: [
+								(_, evt) => console.log('startingTurn, SELECT_TOKEN', evt),
+								send((_, evt) => ({ ...evt }))
+							],
+							target: 'selectingTokens'
+						}
+					}
+				},
+				selectingTokens: {
+					on: {
+						SELECT_TOKEN: {
+							cond: 'canSelectToken',
+							actions: 'selectToken'
+						},
+						RESET_TURN: {
+							target: 'takingTurn'
+						},
+						END_TURN: { target: 'waitingToPublish' }
+					}
+				},
+				buyingCard: {
+					on: {
+						RESET_TURN: {
+							target: 'takingTurn'
+						},
+						END_TURN: {
+							target: 'waitingToPublish'
+						}
+					}
 				}
 			}
 		},
