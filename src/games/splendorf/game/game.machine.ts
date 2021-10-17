@@ -17,6 +17,7 @@ export type GameEvt =
 	| { type: 'SETUP'; users: Users }
 	| { type: 'UPDATE'; game: Game }
 	| { type: 'PUBLISH'; callback: (game: Game) => void }
+	| { type: 'CAN_SELECT_TOKEN'; color: any }
 	| { type: 'SELECT_TOKEN'; color: any }
 	| { type: 'BUY_CARD'; card: Card; index: number }
 	| { type: 'HOLD_CARD'; card: Card; index: number }

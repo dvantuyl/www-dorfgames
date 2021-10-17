@@ -3,13 +3,10 @@ import { assign } from 'xstate';
 import { cloneDeep } from 'lodash';
 import { sessionPlayer } from '../util';
 
-export const testToken = assign({
-	tokens: (ctx, evt) => {
-		console.log('assign', evt);
-		return { bk: 0, re: 0, wh: 0, bl: 0, gr: 0, go: 0 };
-	}
-	// players,
-	// turn
+export const selectToken = assign({
+	tokens,
+	players,
+	turn
 });
 
 function tokens(ctx: GameCtx, evt: GameEvt): Tokens {

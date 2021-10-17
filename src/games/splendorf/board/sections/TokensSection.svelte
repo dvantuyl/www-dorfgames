@@ -6,20 +6,22 @@
 
 	$: tokens = $game.context.tokens;
 
+	$: console.log('game', $game.nextEvents);
+
 	$: disabled = (color): boolean => {
-		return !$game.can({ type: 'SELECT_TOKEN', color });
+		return !$game.can({ type: 'CAN_SELECT_TOKEN', color });
 	};
 
-	// function handleClick(color) {
-	// 	game.send('SELECT_TOKEN', { color });
-	// }
+	function handleClick(color) {
+		game.send('SELECT_TOKEN', { color });
+	}
 </script>
 
-{#each ['wh', 're', 'bl', 'gr', 'go', 'bk'] as color}
+{#each colors as color}
 	<button
 		class="h-full w-full transform disabled:scale-90 disabled:opacity-80 disabled:cursor-not-allowed"
 		value={color}
-		on:click={() => game.send('SELECT_TOKEN', { color })}
+		on:click={() => handleClick(color)}
 		disabled={disabled(color)}
 	>
 		<Token count={tokens[color]} {color} />

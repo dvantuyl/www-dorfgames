@@ -5,8 +5,10 @@ export const turnStates = {
 	states: {
 		startingTurn: {
 			on: {
+				CAN_SELECT_TOKEN: {
+					// cond: 'canSelectToken'
+				},
 				SELECT_TOKEN: {
-					// cond: 'canSelectToken',
 					actions: [
 						(ctx, evt) => console.log('startingTurn, SELECT_TOKEN', evt),
 						send((_, evt) => ({ ...evt }))
@@ -17,23 +19,11 @@ export const turnStates = {
 		},
 		selectingTokens: {
 			on: {
+				CAN_SELECT_TOKEN: {
+					cond: 'canSelectToken'
+				},
 				SELECT_TOKEN: {
-					// cond: 'canSelectToken',
-					actions: [
-						(ctx, evt) => console.log('selectingTokens, SELECT_TOKEN', evt.color),
-						assign((ctx, evt) => {
-							console.log('3rd assign', evt);
-							return ctx;
-						})
-						// assign({
-						// 	tokens: (_, evt) => {
-						// 		console.log('assign inside', evt);
-						// 		return { bk: 0, re: 0, wh: 0, bl: 0, gr: 0, go: 0 };
-						// 	}
-						// 	// players,
-						// 	// turn
-						// })
-					]
+					actions: 'selectToken'
 				},
 				RESET_TURN: {
 					target: 'startingTurn'
