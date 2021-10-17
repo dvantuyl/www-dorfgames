@@ -1,5 +1,6 @@
-export { Users, User } from '$lib/types';
-export { GameCtx, GameEvt } from './game.machine';
+import type { destroy_block } from 'svelte/internal';
+
+export { Users } from '$lib/types';
 
 export type Game = {
 	currentPlayerIndex: number;
@@ -7,9 +8,6 @@ export type Game = {
 	tokens: Tokens;
 	cards: Cards;
 	// TODO ext: { nobles?: Noble[] } & { cities?: City[] };
-};
-export type Turn = {
-	selectedTokens: Tokens;
 };
 
 export type Tokens = Colors<number>;

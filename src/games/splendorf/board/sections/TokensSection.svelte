@@ -4,22 +4,22 @@
 
 	export let game;
 
-	$: tokens = $game.context.tokensRef.getSnapshot().context.tokens;
+	$: tokens = $game.context.tokens;
 
 	$: disabled = (color): boolean => {
-		return !$game.can({ type: 'TOKENS.SELECT', color });
+		return !$game.can({ type: 'SELECT_TOKEN', color });
 	};
 
-	function handleClick(color) {
-		game.send('TOKENS.SELECT', { color });
-	}
+	// function handleClick(color) {
+	// 	game.send('SELECT_TOKEN', { color });
+	// }
 </script>
 
-{#each colors as color}
+{#each ['wh', 're', 'bl', 'gr', 'go', 'bk'] as color}
 	<button
 		class="h-full w-full transform disabled:scale-90 disabled:opacity-80 disabled:cursor-not-allowed"
 		value={color}
-		on:click={() => handleClick(color)}
+		on:click={() => game.send('SELECT_TOKEN', { color })}
 		disabled={disabled(color)}
 	>
 		<Token count={tokens[color]} {color} />

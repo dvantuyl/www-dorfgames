@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Color } from '../../game/types';
+	import type { Color } from '../../game/types.d';
 	import { ColorClass } from './colorclass';
 
 	export let tokenCount = 0;
