@@ -135,7 +135,7 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 							target: 'selectingTokens'
 						},
 						'CARDS.BUY': {
-							cond: 'canBuyCard',
+							// cond: 'canBuyCard',
 							actions: [
 								forwardTo('players'),
 								forwardTo('cards'),
