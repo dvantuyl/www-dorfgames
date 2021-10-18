@@ -1,15 +1,15 @@
 <script>
-	import pick from 'lodash/pick.js';
+	import { pick } from 'lodash';
 	import Deck from '../components/Deck.svelte';
 	import Card from '../components/Card.svelte';
 
 	export let game;
 	export let row;
 
-	$: cards = $game.context.cardsRef.getSnapshot().context.cards[row];
+	$: cards = $game.context.cards[row];
 
 	function handleClick(index) {
-		$game.context.cardViewerRef.send('CARD_VIEWER.OPEN', { cards: cards.reveal, index });
+		$game.context.cardViewRef.send('OPEN_CARD_VIEW', { cards: cards.reveal, index });
 	}
 </script>
 

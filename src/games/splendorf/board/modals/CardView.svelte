@@ -1,30 +1,35 @@
 <script lang="ts">
-	import pick from 'lodash/pick.js';
+	import { pick } from 'lodash';
 	import { clickOutside } from '$lib/actions/clickOutside';
 	import Card from '../components/Card.svelte';
+	import { canBuyCard } from '../../game';
 
 	export let game;
 
-	$: cardViewer = $game.context.cardViewerRef.getSnapshot();
-	$: opened = cardViewer.value !== 'closed';
+	$: cardView = $game.context.cardViewRef.getSnapshot();
+	$: opened = cardView.value !== 'closed';
 
-	$: index = cardViewer.context.index;
-	$: card = cardViewer.context.cards[index];
-	$: disablePrev = !cardViewer.can({ type: 'CARD_VIEWER.PREV' });
-	$: disableNext = !cardViewer.can({ type: 'CARD_VIEWER.NEXT' });
-	$: disableBuy = !$game.can({ type: 'CARDS.BUY', card, index });
+	$: index = cardView.context.index;
+	$: card = cardView.context.cards[index];
+	$: disablePrev = !cardView.can({ type: 'PREV_CARD' });
+	$: disableNext = !cardView.can({ type: 'NEXT_CARD' });
+	$: disableBuy = !(
+		$game.nextEvents.includes('BUY_CARD') &&
+		canBuyCard($game.context, { type: 'BUY_CARD' as const, card, index })
+	);
 
 	function handleClose() {
-		$game.context.cardViewerRef.send('CARD_VIEWER.CLOSE');
+		$game.context.cardViewRef.send('CLOSE_CARD_VIEW');
 	}
 	function handlePrev() {
-		$game.context.cardViewerRef.send('CARD_VIEWER.PREV');
+		$game.context.cardViewRef.send('PREV_CARD');
 	}
 	function handleNext() {
-		$game.context.cardViewerRef.send('CARD_VIEWER.NEXT');
+		$game.context.cardViewRef.send('NEXT_CARD');
 	}
 	function handleBuy() {
-		game.send('CARDS.BUY', { card, index });
+		game.send('BUY_CARD', { card, index });
+		$game.context.cardViewRef.send('CLOSE_CARD_VIEW');
 	}
 </script>
 

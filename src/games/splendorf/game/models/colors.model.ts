@@ -2,8 +2,8 @@ import type { Color, Colors } from '../types';
 
 enum ColorEnum {
 	bk,
-	wh,
 	re,
+	wh,
 	gr,
 	bl,
 	go
@@ -17,5 +17,5 @@ export const Clr = colors.reduce((acc: { [K in Color]?: Color }, clr: Color) => 
 }, {}) as { [K in Color]: Color };
 
 export function createColors<T>(value: T, params: Partial<Colors<T>> = {}): Colors<T> {
-	return { bk: value, wh: value, re: value, bl: value, gr: value, ...params };
+	return { bk: value, re: value, wh: value, bl: value, gr: value, ...params };
 }

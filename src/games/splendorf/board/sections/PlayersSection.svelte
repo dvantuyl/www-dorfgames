@@ -4,7 +4,7 @@
 
 	export let game;
 
-	$: players = $game.context.playersRef.getSnapshot().context.players;
+	$: players = $game.context.players;
 
 	$: orderedPlayers = Object.values(players).sort((a: Player, b: Player) => a.index - b.index);
 </script>

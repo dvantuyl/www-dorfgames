@@ -1,6 +1,6 @@
 import type { Player } from '../types';
 import { createPlayerCards } from './playerCards.model';
-import { createTokens } from '../tokens';
+import { createTokens } from './tokens.model';
 
 const player = {
 	id: null,

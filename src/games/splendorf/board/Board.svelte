@@ -6,7 +6,7 @@
 	import type { StateMachine } from 'xstate';
 	import GoalsSection from './sections/GoalsSection.svelte';
 	import CardsSection from './sections/CardsSection.svelte';
-	import CardViewer from './modals/CardViewer.svelte';
+	import CardViewer from './modals/CardView.svelte';
 
 	export let game: StateMachine<GameCtx, any, GameEvt>;
 	export let room;
@@ -20,9 +20,9 @@
 			<div style="grid-area: PLR">
 				<PlayersSection {game} />
 			</div>
-			<div style="grid-area: GOL">
+			<!-- <div style="grid-area: GOL">
 				<GoalsSection />
-			</div>
+			</div> -->
 			<div
 				class="grid gap-1 grid-flow-col auto-cols-1fr sm:gap-3 sm:grid-flow-row sm:auto-rows-1fr"
 				style="grid-area: TKN"

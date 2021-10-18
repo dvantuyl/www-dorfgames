@@ -18,14 +18,14 @@
 		game = interpret(gameMachine).start();
 		if (setup) {
 			game.send('SETUP', { users: shuffle(room.users) });
-			game.send('GAME.PUBLISH', { callback: room.publishState });
+			game.send('PUBLISH', { callback: room.publishState });
 		}
 		initialized = true;
 	});
 
 	$: if (initialized && state) {
-		console.log('game UPDATE', state);
-		game.send('UPDATE', { game: state });
+		console.log('UPDATE', state);
+		game.send('UPDATE', { history: state });
 	}
 </script>
 

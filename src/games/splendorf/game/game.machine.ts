@@ -1,115 +1,68 @@
-import type { ActorRefWithDeprecatedState, StateMachine } from 'xstate';
-import type { Tokens, Users, Game, Color, Card } from './types';
-import type { PlayersCtx, PlayersEvt } from './players/players.machine';
-import type { TokensCtx, TokensEvt } from './tokens';
-import type { CardsCtx, CardsEvt } from './cards';
-import type { CardViewerCtx, CardViewerEvt } from './cardViewer';
-import { createMachine, spawn, forwardTo, send, assign } from 'xstate';
-import { guards } from './game.guards';
-import { actions } from './game.actions';
-import { tokensMachine, createTokens } from './tokens';
-import { playersMachine } from './players';
-import { cardsMachine } from './cards';
-import { cardViewerMachine } from './cardViewer';
-
+import type { StateMachine } from 'xstate';
+import type { Tokens, Users, Game, Players, Card, Turn, Cards } from './types';
+import { createMachine, send, assign, spawn } from 'xstate';
+import { createTokens } from './models';
+import * as actions from './actions';
+import * as guards from './guards';
+import { cardViewMachine } from './cardView.machine';
 export interface GameCtx {
 	sessionPlayerId: string;
 	currentPlayerIndex: number;
-	turn: { tokens: Tokens };
-	playersRef: ActorRefWithDeprecatedState<
-		PlayersCtx,
-		PlayersEvt,
-		{
-			value: any;
-			context: PlayersCtx;
-		}
-	>;
-	tokensRef: ActorRefWithDeprecatedState<
-		TokensCtx,
-		TokensEvt,
-		{
-			value: any;
-			context: TokensCtx;
-		}
-	>;
-	cardsRef: ActorRefWithDeprecatedState<
-		CardsCtx,
-		CardsEvt,
-		{
-			value: any;
-			context: CardsCtx;
-		}
-	>;
-	cardViewerRef: ActorRefWithDeprecatedState<
-		CardViewerCtx,
-		CardViewerEvt,
-		{
-			value: any;
-			context: CardViewerCtx;
-		}
-	>;
+	tokens: Tokens;
+	players: Players;
+	cards: Cards;
+	turn: Turn;
+	history: Game[];
+	cardViewRef: any;
 }
 
 export type GameEvt =
 	| { type: 'SETUP'; users: Users }
-	| { type: 'UPDATE'; game: Game }
-	| { type: 'TOKENS.SELECT'; color: Color }
-	| { type: 'CARDS.BUY'; card: Card; index: number }
-	| { type: 'GAME.PUBLISH'; callback: (game: Game) => void }
-	| { type: 'GAME.END_TURN'; callback: (game: Game) => void }
-	| { type: 'GAME.RESET_TURN' };
+	| { type: 'UPDATE'; history: Game[] }
+	| { type: 'PUBLISH'; callback: (history: Game[]) => void }
+	| { type: 'CAN_SELECT_TOKEN'; color: any }
+	| { type: 'SELECT_TOKEN'; color: any }
+	| { type: 'BUY_CARD'; card: Card; index: number }
+	| { type: 'HOLD_CARD'; card: Card; index: number }
+	| { type: 'END_TURN' }
+	| { type: 'RESET_TURN' };
 
 export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx, any, GameEvt> {
 	return createMachine<GameCtx, GameEvt>(
 		{
-			id: 'gameMachine',
+			id: 'game',
 			initial: 'initializing',
 			context: {
 				sessionPlayerId,
 				currentPlayerIndex: 0,
-				turn: { tokens: createTokens() },
-				playersRef: null,
-				tokensRef: null,
-				cardsRef: null,
-				cardViewerRef: null
+				tokens: createTokens(),
+				cards: null,
+				players: {},
+				turn: { selectedTokens: createTokens() },
+				history: [],
+				cardViewRef: null
 			},
 			states: {
 				initializing: {
 					entry: assign({
-						playersRef: () => spawn(playersMachine, 'players'),
-						tokensRef: () => spawn(tokensMachine, 'tokens'),
-						cardsRef: () => spawn(cardsMachine, 'cards'),
-						cardViewerRef: () => spawn(cardViewerMachine, 'cardViewer')
+						cardViewRef: () => spawn(cardViewMachine, 'cardView')
 					}),
 					on: {
 						SETUP: {
 							target: 'waitingToPublish',
-							actions: [
-								send((ctx, evt) => ({ ...evt, sessionPlayerId: ctx.sessionPlayerId }), {
-									to: 'players'
-								}),
-								forwardTo('cards'),
-								forwardTo('tokens')
-							]
+							actions: 'setupGame'
 						},
 						UPDATE: {
 							target: 'waitingTurn',
-							actions: [
-								'updatePlayerTurn',
-								send((ctx, evt) => ({ ...evt, sessionPlayerId: ctx.sessionPlayerId }), {
-									to: 'players'
-								}),
-								forwardTo('cards'),
-								forwardTo('tokens')
-							]
+							actions: 'updateGame'
 						}
 					}
 				},
 				waitingToPublish: {
 					on: {
-						'GAME.PUBLISH': {
+						PUBLISH: {
 							target: 'waitingTurn',
-							actions: ['publish']
+							actions: 'publishGame'
 						}
 					}
 				},
@@ -118,59 +71,64 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 					on: {
 						UPDATE: {
 							target: 'waitingTurn',
-							actions: [
-								'updatePlayerTurn',
-								forwardTo('players'),
-								forwardTo('cards'),
-								forwardTo('tokens')
-							]
+							actions: 'updateGame'
 						}
 					}
 				},
 				takingTurn: {
 					on: {
-						'TOKENS.SELECT': {
+						SELECT_TOKEN: {
 							cond: 'canSelectToken',
-							actions: send((_, evt) => ({ ...evt })),
+							actions: send((_, evt) => evt),
 							target: 'selectingTokens'
 						},
-						'CARDS.BUY': {
-							// cond: 'canBuyCard',
-							actions: [
-								forwardTo('players'),
-								forwardTo('cards'),
-								forwardTo('tokens'),
-								send({ type: 'CARD_VIEWER.CLOSE' }, { to: 'cardViewer' })
-							],
-							target: 'buyingCard'
+						BUY_CARD: {
+							target: 'buyingCard',
+							actions: 'buyCard'
+						},
+						END_TURN: {
+							target: 'waitingToPublish',
+							actions: 'endTurn'
 						}
 					}
 				},
 				selectingTokens: {
 					on: {
-						'TOKENS.SELECT': {
+						SELECT_TOKEN: {
 							cond: 'canSelectToken',
-							actions: ['selectTurnTokens', forwardTo('tokens'), forwardTo('players')]
+							actions: 'selectToken'
 						},
-						'GAME.RESET_TURN': {
+						RESET_TURN: {
 							target: 'takingTurn',
-							actions: ['resetTurn', forwardTo('players'), forwardTo('cards'), forwardTo('tokens')]
+							actions: 'resetTurn'
 						},
-						'GAME.END_TURN': {
+						END_TURN: {
 							target: 'waitingToPublish',
-							actions: ['endTurn']
+							actions: 'endTurn'
 						}
 					}
 				},
 				buyingCard: {
 					on: {
-						'GAME.RESET_TURN': {
+						RESET_TURN: {
 							target: 'takingTurn',
-							actions: ['resetTurn', forwardTo('players'), forwardTo('cards'), forwardTo('tokens')]
+							actions: 'resetTurn'
 						},
-						'GAME.END_TURN': {
+						END_TURN: {
 							target: 'waitingToPublish',
-							actions: ['endTurn']
+							actions: 'endTurn'
+						}
+					}
+				},
+				holdingCard: {
+					on: {
+						RESET_TURN: {
+							target: 'takingTurn',
+							actions: 'resetTurn'
+						},
+						END_TURN: {
+							target: 'waitingToPublish',
+							actions: 'endTurn'
 						}
 					}
 				}

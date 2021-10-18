@@ -1,24 +1,24 @@
 import type { StateMachine } from 'xstate';
-import { sendUpdate, createMachine, send, assign } from 'xstate';
-import type { Card } from '../types';
+import { sendUpdate, createMachine, assign } from 'xstate';
+import type { Card } from './types';
 
-export interface CardViewerCtx {
+export interface CardViewCtx {
 	cards: Card[];
 	index: number;
 }
 
-export type CardViewerEvt =
-	| { type: 'CARD_VIEWER.OPEN'; cards: Card[]; index: number }
-	| { type: 'CARD_VIEWER.PREV' }
-	| { type: 'CARD_VIEWER.NEXT' }
-	| { type: 'CARD_VIEWER.CLOSE' };
+export type CardViewEvt =
+	| { type: 'OPEN_CARD_VIEW'; cards: Card[]; index: number }
+	| { type: 'PREV_CARD' }
+	| { type: 'NEXT_CARD' }
+	| { type: 'CLOSE_CARD_VIEW' };
 
-export const cardViewerMachine: StateMachine<CardViewerCtx, any, CardViewerEvt> = createMachine<
-	CardViewerCtx,
-	CardViewerEvt
+export const cardViewMachine: StateMachine<CardViewCtx, any, CardViewEvt> = createMachine<
+	CardViewCtx,
+	CardViewEvt
 >(
 	{
-		id: 'cardViewer',
+		id: 'cardView',
 		initial: 'closed',
 		context: {
 			cards: [],
@@ -27,7 +27,7 @@ export const cardViewerMachine: StateMachine<CardViewerCtx, any, CardViewerEvt> 
 		states: {
 			closed: {
 				on: {
-					'CARD_VIEWER.OPEN': {
+					OPEN_CARD_VIEW: {
 						actions: [
 							assign({
 								cards: (_, evt) => evt.cards,
@@ -41,7 +41,7 @@ export const cardViewerMachine: StateMachine<CardViewerCtx, any, CardViewerEvt> 
 			},
 			opened: {
 				on: {
-					'CARD_VIEWER.PREV': {
+					PREV_CARD: {
 						cond: 'hasPrevCard',
 						actions: [
 							assign({
@@ -50,7 +50,7 @@ export const cardViewerMachine: StateMachine<CardViewerCtx, any, CardViewerEvt> 
 							sendUpdate()
 						]
 					},
-					'CARD_VIEWER.NEXT': {
+					NEXT_CARD: {
 						cond: 'hasNextCard',
 						actions: [
 							assign({
@@ -59,7 +59,7 @@ export const cardViewerMachine: StateMachine<CardViewerCtx, any, CardViewerEvt> 
 							sendUpdate()
 						]
 					},
-					'CARD_VIEWER.CLOSE': {
+					CLOSE_CARD_VIEW: {
 						target: 'closed',
 						actions: sendUpdate()
 					}
@@ -69,8 +69,16 @@ export const cardViewerMachine: StateMachine<CardViewerCtx, any, CardViewerEvt> 
 	},
 	{
 		guards: {
-			hasPrevCard: (ctx: CardViewerCtx): boolean => ctx.index > 0,
-			hasNextCard: (ctx: CardViewerCtx): boolean => ctx.index < ctx.cards.length - 1
+			hasPrevCard,
+			hasNextCard
 		}
 	}
 );
+
+export function hasPrevCard(ctx: CardViewCtx): boolean {
+	return ctx.index > 0;
+}
+
+export function hasNextCard(ctx: CardViewCtx): boolean {
+	return ctx.index < ctx.cards.length - 1;
+}

@@ -1,17 +1,19 @@
 <script lang="ts">
-	import { colors } from '../../game';
+	import type { GameEvt } from '../../game';
+	import { colors, canSelectToken } from '../../game';
 	import Token from '../components/Token.svelte';
 
 	export let game;
 
-	$: tokens = $game.context.tokensRef.getSnapshot().context.tokens;
+	$: tokens = $game.context.tokens;
 
 	$: disabled = (color): boolean => {
-		return !$game.can({ type: 'TOKENS.SELECT', color });
+		const evt: GameEvt = { type: 'SELECT_TOKEN', color };
+		return !($game.nextEvents.includes('SELECT_TOKEN') && canSelectToken($game.context, evt));
 	};
 
 	function handleClick(color) {
-		game.send('TOKENS.SELECT', { color });
+		game.send('SELECT_TOKEN', { color });
 	}
 </script>
 
