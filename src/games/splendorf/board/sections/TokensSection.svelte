@@ -19,7 +19,10 @@
 
 {#each colors as color}
 	<button
-		class="h-full w-full transform disabled:scale-90 disabled:opacity-80 disabled:cursor-not-allowed"
+		class="h-full w-full transform
+					{tokens[color] === 0 ? 'disabled:opacity-0' : 'disabled:opacity-80'}
+					disabled:scale-90 disabled:cursor-not-allowed"
+		class:opacity-0={tokens[color] === 0}
 		value={color}
 		on:click={() => handleClick(color)}
 		disabled={disabled(color)}
