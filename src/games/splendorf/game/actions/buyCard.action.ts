@@ -15,6 +15,8 @@ export const buyCard = assign((ctx: GameCtx, evt: GameEvt) => {
 
 	if (!card) return;
 
+	row.reveal[evt.index] = null;
+
 	[Clr.bk, Clr.wh, Clr.re, Clr.bl, Clr.gr].forEach((clr: Color) => {
 		const cardCount = player.cards[clr].length;
 		const tokenCount = player.tokens[clr];

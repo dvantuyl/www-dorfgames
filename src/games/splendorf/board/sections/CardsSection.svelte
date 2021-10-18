@@ -18,8 +18,12 @@
 </div>
 {#each cards.reveal as card, i}
 	<div style="grid-area: R${row}${i}">
-		<button class="w-full h-full max-w-xs" on:click={() => handleClick(i)}>
-			<Card {...pick(card, ['clr', 'pts', 'cost'])} />
-		</button>
+		{#if card}
+			<button class="w-full h-full max-w-xs" on:click={() => handleClick(i)}>
+				<Card {...pick(card, ['clr', 'pts', 'cost'])} />
+			</button>
+		{:else}
+			<div class="w-full h-full max-w-xs">&#8203;</div>
+		{/if}
 	</div>
 {/each}
