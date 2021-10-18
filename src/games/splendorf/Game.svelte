@@ -25,7 +25,7 @@
 
 	$: if (initialized && state) {
 		console.log('UPDATE', state);
-		game.send('UPDATE', { game: state });
+		game.send('UPDATE', { history: state });
 	}
 </script>
 

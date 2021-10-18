@@ -5,27 +5,6 @@ import { sessionPlayer } from '../util';
 import { Clr } from '../models';
 
 export function canSelectToken(ctx: GameCtx, evt: GameEvt): boolean {
-	if (evt.type !== 'SELECT_TOKEN') return;
-
-	console.log(
-		'canSelectToken',
-		ctx.turn.selectedTokens,
-		evt.color,
-		tokensAvailable(ctx, evt),
-		tokenIsntGold(evt),
-		// - A player can never have more than 10 tokens at the end of
-		//   their turn (including jokers).
-		playerTokensLessThan10(ctx),
-		// - Take 3 gem tokens of different colors.
-		selectingDifferentColorToken(ctx, evt),
-		differentColorsSelected(ctx),
-		lessThan3TokensSelected(ctx),
-		// - Take 2 gem tokens of the same color.
-		// - This action is only possible if there are at least 4 tokens of the
-		//   chosen color left when the player takes them
-		lessThan2TokensSelected(ctx),
-		atLeast4TokensAvailable(ctx, evt)
-	);
 	return (
 		tokensAvailable(ctx, evt) &&
 		tokenIsntGold(evt) &&

@@ -48,8 +48,8 @@ enum ColorEnum {
 	bk,
 	wh,
 	re,
-	gr,
 	bl,
+	gr,
 	go
 }
 export type Color = keyof typeof ColorEnum;

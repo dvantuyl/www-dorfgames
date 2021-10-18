@@ -1,14 +1,21 @@
-import type { GameCtx, GameEvt, Tokens, Players, User } from '../types';
+import type { GameCtx, GameEvt, Tokens, Players, User, Game, Cards } from '../types';
 import { assign } from 'xstate';
-import { reduce } from 'lodash';
-import { createPlayer, createTokens } from '../models';
+import { reduce, cloneDeep } from 'lodash';
+import { createCards, createPlayer, createTokens } from '../models';
 
-export const setupGame = assign({
-	players,
-	tokens
+export const setupGame = assign((ctx: GameCtx, evt: GameEvt): GameCtx => {
+	const game: Game = {
+		currentPlayerIndex: 0,
+		players: players(evt),
+		tokens: tokens(evt),
+		cards: cards()
+	};
+	ctx = { ...ctx, ...game };
+	ctx.history = [game];
+	return ctx;
 });
 
-function players(_: never, evt: GameEvt): Players {
+function players(evt: GameEvt): Players {
 	if (evt.type !== 'SETUP') return;
 	return reduce(
 		evt.users,
@@ -23,7 +30,7 @@ function players(_: never, evt: GameEvt): Players {
 	);
 }
 
-function tokens(_: never, evt: GameEvt): Tokens {
+function tokens(evt: GameEvt): Tokens {
 	if (evt.type !== 'SETUP') return;
 	const numPlayers = Object.values(evt.users).length;
 	return createTokens(numTokens(numPlayers), { go: 5 });
@@ -38,4 +45,8 @@ function numTokens(numPlayers: number): number {
 		default:
 			return 7;
 	}
+}
+
+function cards(): Cards {
+	return createCards();
 }

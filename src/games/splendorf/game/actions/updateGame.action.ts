@@ -1,17 +1,10 @@
-import type { GameEvt } from '../types';
+import type { GameCtx, GameEvt } from '../types';
 import { assign } from 'xstate';
+import { cloneDeep } from 'lodash';
 
-export const updateGame = assign({
-	currentPlayerIndex: (_, evt: GameEvt) => {
-		if (evt.type !== 'UPDATE') return;
-		return evt.game.currentPlayerIndex;
-	},
-	players: (_, evt) => {
-		if (evt.type !== 'UPDATE') return;
-		return evt.game.players;
-	},
-	tokens: (_, evt) => {
-		if (evt.type !== 'UPDATE') return;
-		return evt.game.tokens;
-	}
+export const updateGame = assign((ctx: GameCtx, evt: GameEvt): GameCtx => {
+	if (evt.type !== 'UPDATE') return;
+	ctx.history = evt.history;
+	ctx = { ...ctx, ...ctx.history[0] };
+	return ctx;
 });

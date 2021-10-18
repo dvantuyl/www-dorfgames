@@ -11,18 +11,16 @@
 
 <div class="mx-auto aspect-w-2 aspect-h-3 rounded-lg">
 	<div class="w-full h-full rounded-lg flex p-2 {ColorClass[clr].bg}">
-		<div class="w-1/2 h-full flex flex-col justify-end">
+		<div class="w-1/4 h-full flex flex-col justify-end">
 			{#each costs as cost}
 				{#if cost[1]}
-					<div class="h-1/5 w-full">
-						<div class="h-full py-[5%]">
-							<Token color={cost[0]} count={cost[1]} />
-						</div>
+					<div class="h-1/5">
+						<Token color={cost[0]} count={cost[1]} />
 					</div>
 				{/if}
 			{/each}
 		</div>
-		<div class="relative w-1/2 h-auto opacity-80" class:hidden={!pts}>
+		<div class="relative w-3/4 h-auto opacity-80" class:hidden={!pts}>
 			<div class="absolute top-0 right-0 w-full h-auto">
 				<svg height="100%" width="100%" viewBox="0 0 100 100" class="fill-current text-black">
 					<text
