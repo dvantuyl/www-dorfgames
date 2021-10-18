@@ -3,10 +3,8 @@
 	export let room;
 
 	function handleAction(event) {
-		console.log('handleAction');
 		switch (event.target.value) {
 			case 'RESET_TURN':
-				console.log('RESET_TURN');
 				game.send('RESET_TURN');
 				break;
 			case 'END_TURN':

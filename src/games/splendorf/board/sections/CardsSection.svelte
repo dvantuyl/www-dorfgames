@@ -4,12 +4,13 @@
 	import Card from '../components/Card.svelte';
 
 	export let game;
+	export let cardView;
 	export let row;
 
 	$: cards = $game.context.cards[row];
 
 	function handleClick(index) {
-		$game.context.cardViewRef.send('OPEN_CARD_VIEW', { cards: cards.reveal, index });
+		cardView.send('OPEN_CARD_VIEW', { cards: cards.reveal, index });
 	}
 </script>
 

@@ -5,31 +5,31 @@
 	import { canBuyCard } from '../../game';
 
 	export let game;
+	export let cardView;
 
-	$: cardView = $game.context.cardViewRef.getSnapshot();
-	$: opened = cardView.value !== 'closed';
+	$: opened = $cardView.value !== 'closed';
 
-	$: index = cardView.context.index;
-	$: card = cardView.context.cards[index];
-	$: disablePrev = !cardView.can({ type: 'PREV_CARD' });
-	$: disableNext = !cardView.can({ type: 'NEXT_CARD' });
+	$: index = $cardView.context.index;
+	$: card = $cardView.context.cards[index];
+	$: disablePrev = !$cardView.can({ type: 'PREV_CARD' });
+	$: disableNext = !$cardView.can({ type: 'NEXT_CARD' });
 	$: disableBuy = !(
 		$game.nextEvents.includes('BUY_CARD') &&
 		canBuyCard($game.context, { type: 'BUY_CARD' as const, card, index })
 	);
 
 	function handleClose() {
-		$game.context.cardViewRef.send('CLOSE_CARD_VIEW');
+		cardView.send('CLOSE_CARD_VIEW');
 	}
 	function handlePrev() {
-		$game.context.cardViewRef.send('PREV_CARD');
+		cardView.send('PREV_CARD');
 	}
 	function handleNext() {
-		$game.context.cardViewRef.send('NEXT_CARD');
+		cardView.send('NEXT_CARD');
 	}
 	function handleBuy() {
 		game.send('BUY_CARD', { card, index });
-		$game.context.cardViewRef.send('CLOSE_CARD_VIEW');
+		cardView.send('CLOSE_CARD_VIEW');
 	}
 </script>
 

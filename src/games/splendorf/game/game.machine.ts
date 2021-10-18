@@ -1,10 +1,9 @@
 import type { StateMachine } from 'xstate';
-import type { Tokens, Users, Game, Players, Card, Turn, Cards } from './types';
-import { createMachine, send, assign, spawn } from 'xstate';
+import type { Tokens, Users, Game, Players, Card, Turn, Cards, Color } from './types';
+import { createMachine, send } from 'xstate';
 import { createTokens } from './models';
 import * as actions from './actions';
 import * as guards from './guards';
-import { cardViewMachine } from './cardView.machine';
 export interface GameCtx {
 	sessionPlayerId: string;
 	currentPlayerIndex: number;
@@ -13,15 +12,14 @@ export interface GameCtx {
 	cards: Cards;
 	turn: Turn;
 	history: Game[];
-	cardViewRef: any;
 }
 
 export type GameEvt =
 	| { type: 'SETUP'; users: Users }
 	| { type: 'UPDATE'; history: Game[] }
 	| { type: 'PUBLISH'; callback: (history: Game[]) => void }
-	| { type: 'CAN_SELECT_TOKEN'; color: any }
-	| { type: 'SELECT_TOKEN'; color: any }
+	| { type: 'CAN_SELECT_TOKEN'; color: Color }
+	| { type: 'SELECT_TOKEN'; color: Color }
 	| { type: 'BUY_CARD'; card: Card; index: number }
 	| { type: 'HOLD_CARD'; card: Card; index: number }
 	| { type: 'END_TURN' }
@@ -39,14 +37,10 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 				cards: null,
 				players: {},
 				turn: { selectedTokens: createTokens() },
-				history: [],
-				cardViewRef: null
+				history: []
 			},
 			states: {
 				initializing: {
-					entry: assign({
-						cardViewRef: () => spawn(cardViewMachine, 'cardView')
-					}),
 					on: {
 						SETUP: {
 							target: 'waitingToPublish',

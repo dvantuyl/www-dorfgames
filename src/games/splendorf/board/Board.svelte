@@ -6,12 +6,11 @@
 	import type { StateMachine } from 'xstate';
 	import GoalsSection from './sections/GoalsSection.svelte';
 	import CardsSection from './sections/CardsSection.svelte';
-	import CardViewer from './modals/CardView.svelte';
+	import CardView from './modals/CardView.svelte';
 
 	export let game: StateMachine<GameCtx, any, GameEvt>;
+	export let cardView;
 	export let room;
-
-	//game.
 </script>
 
 <div class="w-full h-full bg-warmGray-600">
@@ -29,9 +28,9 @@
 			>
 				<TokensSection {game} />
 			</div>
-			<CardsSection {game} row={2} />
-			<CardsSection {game} row={1} />
-			<CardsSection {game} row={0} />
+			<CardsSection {game} {cardView} row={2} />
+			<CardsSection {game} {cardView} row={1} />
+			<CardsSection {game} {cardView} row={0} />
 			<div style="grid-area: ACT">
 				<ActionsSection {game} {room} />
 			</div>
@@ -39,7 +38,7 @@
 	</div>
 </div>
 
-<CardViewer {game} />
+<CardView {game} {cardView} />
 
 <style>
 	/* MOBILE LAYOUT */

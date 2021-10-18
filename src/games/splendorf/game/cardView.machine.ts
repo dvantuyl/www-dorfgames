@@ -1,5 +1,5 @@
 import type { StateMachine } from 'xstate';
-import { sendUpdate, createMachine, assign } from 'xstate';
+import { createMachine, assign } from 'xstate';
 import type { Card } from './types';
 
 export interface CardViewCtx {
@@ -32,8 +32,7 @@ export const cardViewMachine: StateMachine<CardViewCtx, any, CardViewEvt> = crea
 							assign({
 								cards: (_, evt) => evt.cards,
 								index: (_, evt) => evt.index
-							}),
-							sendUpdate()
+							})
 						],
 						target: 'opened'
 					}
@@ -46,8 +45,7 @@ export const cardViewMachine: StateMachine<CardViewCtx, any, CardViewEvt> = crea
 						actions: [
 							assign({
 								index: (ctx) => ctx.index - 1
-							}),
-							sendUpdate()
+							})
 						]
 					},
 					NEXT_CARD: {
@@ -55,13 +53,11 @@ export const cardViewMachine: StateMachine<CardViewCtx, any, CardViewEvt> = crea
 						actions: [
 							assign({
 								index: (ctx) => ctx.index + 1
-							}),
-							sendUpdate()
+							})
 						]
 					},
 					CLOSE_CARD_VIEW: {
-						target: 'closed',
-						actions: sendUpdate()
+						target: 'closed'
 					}
 				}
 			}
