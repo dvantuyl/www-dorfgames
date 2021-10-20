@@ -2,13 +2,15 @@ import type { StateMachine } from 'xstate';
 import { createMachine, assign } from 'xstate';
 import type { Card } from './types';
 
+type Mode = 'board' | 'player';
 export interface CardViewCtx {
 	cards: Card[];
 	index: number;
+	mode: Mode;
 }
 
 export type CardViewEvt =
-	| { type: 'OPEN_CARD_VIEW'; cards: Card[]; index: number }
+	| { type: 'OPEN_CARD_VIEW'; cards: Card[]; index: number; mode: Mode }
 	| { type: 'PREV_CARD' }
 	| { type: 'NEXT_CARD' }
 	| { type: 'CLOSE_CARD_VIEW' };
@@ -22,7 +24,8 @@ export const cardViewMachine: StateMachine<CardViewCtx, any, CardViewEvt> = crea
 		initial: 'closed',
 		context: {
 			cards: [],
-			index: 0
+			index: 0,
+			mode: 'board'
 		},
 		states: {
 			closed: {
@@ -31,7 +34,8 @@ export const cardViewMachine: StateMachine<CardViewCtx, any, CardViewEvt> = crea
 						actions: [
 							assign({
 								cards: (_, evt) => evt.cards,
-								index: (_, evt) => evt.index
+								index: (_, evt) => evt.index,
+								mode: (_, evt) => evt.mode
 							})
 						],
 						target: 'opened'

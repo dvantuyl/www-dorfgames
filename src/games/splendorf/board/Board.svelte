@@ -7,9 +7,11 @@
 	import GoalsSection from './sections/GoalsSection.svelte';
 	import CardsSection from './sections/CardsSection.svelte';
 	import CardView from './modals/CardView.svelte';
+	import CardCollection from './modals/CardCollection.svelte';
 
 	export let game: StateMachine<GameCtx, any, GameEvt>;
 	export let cardView;
+	export let cardCollection;
 	export let room;
 </script>
 
@@ -17,7 +19,7 @@
 	<div class="sm:max-w-6xl mx-auto">
 		<div class="board w-auto h-full grid gap-1 sm:gap-3">
 			<div style="grid-area: PLR">
-				<PlayersSection {game} />
+				<PlayersSection {game} {cardCollection} />
 			</div>
 			<!-- <div style="grid-area: GOL">
 				<GoalsSection />
@@ -38,7 +40,8 @@
 	</div>
 </div>
 
-<CardView {game} {cardView} />
+<CardView {game} {cardCollection} {cardView} />
+<CardCollection {cardCollection} {cardView} />
 
 <style>
 	/* MOBILE LAYOUT */

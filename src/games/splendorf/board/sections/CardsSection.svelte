@@ -10,7 +10,7 @@
 	$: cards = $game.context.cards[row];
 
 	function handleClick(index) {
-		cardView.send('OPEN_CARD_VIEW', { cards: cards.reveal, index });
+		cardView.send('OPEN_CARD_VIEW', { cards: cards.reveal, index, mode: 'board' });
 	}
 </script>
 

@@ -3,16 +3,23 @@
 	import { clickOutside } from '$lib/actions/clickOutside';
 	import Card from '../components/Card.svelte';
 	import { canBuyCard } from '../../game';
+	import CardCollection from './CardCollection.svelte';
+	import { getContext } from 'svelte';
 
 	export let game;
 	export let cardView;
+	export let cardCollection;
 
 	$: opened = $cardView.value !== 'closed';
 
 	$: index = $cardView.context.index;
 	$: card = $cardView.context.cards[index];
-	$: disablePrev = !$cardView.can({ type: 'PREV_CARD' });
-	$: disableNext = !$cardView.can({ type: 'NEXT_CARD' });
+	$: disablePrevCard = !$cardView.can({ type: 'PREV_CARD' });
+	$: disableNextCard = !$cardView.can({ type: 'NEXT_CARD' });
+	$: disableReturnToCollectionPrev =
+		$cardView.can({ type: 'PREV_CARD' }) || $cardView.context.mode !== 'player';
+	$: disableReturnToCollectionNext =
+		$cardView.can({ type: 'NEXT_CARD' }) || $cardView.context.mode !== 'player';
 	$: disableBuy = !(
 		$game.nextEvents.includes('BUY_CARD') &&
 		canBuyCard($game.context, { type: 'BUY_CARD' as const, card, index })
@@ -21,11 +28,15 @@
 	function handleClose() {
 		cardView.send('CLOSE_CARD_VIEW');
 	}
-	function handlePrev() {
+	function prevCard() {
 		cardView.send('PREV_CARD');
 	}
-	function handleNext() {
+	function nextCard() {
 		cardView.send('NEXT_CARD');
+	}
+	function returnToCollection() {
+		cardCollection.send('OPEN_CARD_COLLECTION');
+		cardView.send('CLOSE_CARD_VIEW');
 	}
 	function handleBuy() {
 		game.send('BUY_CARD', { card, index });
@@ -56,13 +67,22 @@
 				class="inline-block overflow-hidden transform transition-all align-middle sm:max-w-md w-full"
 			>
 				<div class="flex items-center">
-					<button
-						class="disabled:opacity-0 disabled:cursor-default"
-						value="prev"
-						on:click={handlePrev}
-						disabled={disablePrev}
-						><i class="text-6xl text-white opacity-70 font-semibold">navigate_before</i></button
-					>
+					<div class="w-16 h-16 flex-none">
+						<button
+							class="disabled:hidden disabled:cursor-default"
+							value="prev"
+							on:click={prevCard}
+							disabled={disablePrevCard}
+							><i class="text-6xl text-white opacity-70 font-semibold">navigate_before</i></button
+						>
+						<button
+							class="disabled:hidden disabled:cursor-default"
+							value="prev"
+							on:click={returnToCollection}
+							disabled={disableReturnToCollectionPrev}
+							><i class="text-6xl text-white opacity-70 font-semibold">navigate_before</i></button
+						>
+					</div>
 					<div class="flex flex-col flex-grow items-center">
 						<div class="w-full">
 							<Card {...pick(card, ['clr', 'pts', 'cost'])} />
@@ -91,13 +111,22 @@
 							<i class="block text-5xl text-white font-semibold">clear</i>
 						</button>
 					</div>
-					<button
-						class="disabled:opacity-0 disabled:cursor-default"
-						value="next"
-						on:click={handleNext}
-						disabled={disableNext}
-						><i class="text-6xl text-white opacity-70 font-semibold">navigate_next</i></button
-					>
+					<div class="w-16 h-16 flex-none">
+						<button
+							class="disabled:hidden disabled:cursor-default"
+							value="next"
+							on:click={nextCard}
+							disabled={disableNextCard}
+							><i class="text-6xl text-white opacity-70 font-semibold">navigate_next</i></button
+						>
+						<button
+							class="disabled:hidden disabled:cursor-default"
+							value="prev"
+							on:click={returnToCollection}
+							disabled={disableReturnToCollectionNext}
+							><i class="text-6xl text-white opacity-70 font-semibold">navigate_next</i></button
+						>
+					</div>
 				</div>
 			</div>
 		</div>

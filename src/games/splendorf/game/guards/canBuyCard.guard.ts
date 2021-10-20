@@ -6,7 +6,7 @@ export function canBuyCard(ctx: GameCtx, evt: GameEvt): boolean {
 	if (evt.type !== 'BUY_CARD' || !evt.card) return;
 
 	const player = sessionPlayer(ctx);
-
+	return true;
 	return (
 		player.tokens[Clr.go] >=
 		colors

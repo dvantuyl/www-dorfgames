@@ -3,6 +3,7 @@
 	import PlayerItem from '../components/PlayerItem.svelte';
 
 	export let game;
+	export let cardCollection;
 
 	$: players = $game.context.players;
 
@@ -12,7 +13,7 @@
 <div class="h-full w-full">
 	{#each orderedPlayers as player}
 		<div class="pb-2 last:pb-0">
-			<PlayerItem {player} />
+			<PlayerItem {player} {cardCollection} />
 		</div>
 	{/each}
 </div>

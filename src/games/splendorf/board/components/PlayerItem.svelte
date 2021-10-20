@@ -3,11 +3,16 @@
 	import TokenCard from './TokenCard.svelte';
 
 	export let player;
+	export let cardCollection;
 
 	const initials = player.name
 		.split(' ')
 		.map((n) => n[0])
 		.join('');
+
+	function handleClick(cards) {
+		cardCollection.send('OPEN_CARD_COLLECTION', { cards });
+	}
 </script>
 
 <div
@@ -18,12 +23,12 @@
 		<span class="hidden sm:inline-block">{player.name}</span>
 	</div>
 	{#each colors as color}
-		<div class="w-full sm:w-1/6 h-full">
+		<button class="w-full sm:w-1/6 h-full" on:click={() => handleClick(player.cards[color])}>
 			<TokenCard
 				cardCount={player.cards[color]?.length || 0}
 				tokenCount={player.tokens[color]}
 				{color}
 			/>
-		</div>
+		</button>
 	{/each}
 </div>
