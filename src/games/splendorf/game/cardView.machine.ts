@@ -2,7 +2,7 @@ import type { StateMachine } from 'xstate';
 import { createMachine, assign } from 'xstate';
 import type { Card } from './types';
 
-type Mode = 'board' | 'player';
+type Mode = 'board' | 'player' | 'holds';
 export interface CardViewCtx {
 	cards: Card[];
 	index: number;

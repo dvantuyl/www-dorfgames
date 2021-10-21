@@ -24,7 +24,7 @@
 		cardView.send('OPEN_CARD_VIEW', {
 			cards,
 			index,
-			mode: 'player' as const
+			mode: $cardCollection.context.mode
 		});
 		cardCollection.send('CLOSE_CARD_COLLECTION');
 	}

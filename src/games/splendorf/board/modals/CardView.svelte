@@ -2,9 +2,7 @@
 	import { pick } from 'lodash';
 	import { clickOutside } from '$lib/actions/clickOutside';
 	import Card from '../components/Card.svelte';
-	import { canBuyCard } from '../../game';
-	import CardCollection from './CardCollection.svelte';
-	import { getContext } from 'svelte';
+	import { canBuyCard, canHoldCard } from '../../game';
 
 	export let game;
 	export let cardView;
@@ -25,6 +23,11 @@
 		canBuyCard($game.context, { type: 'BUY_CARD' as const, card, index })
 	);
 
+	$: disableHold = !(
+		$game.nextEvents.includes('HOLD_CARD') &&
+		canHoldCard($game.context, { type: 'HOLD_CARD' as const, card, index })
+	);
+
 	function handleClose() {
 		cardView.send('CLOSE_CARD_VIEW');
 	}
@@ -38,8 +41,12 @@
 		cardCollection.send('OPEN_CARD_COLLECTION');
 		cardView.send('CLOSE_CARD_VIEW');
 	}
-	function handleBuy() {
+	function buyCard() {
 		game.send('BUY_CARD', { card, index });
+		cardView.send('CLOSE_CARD_VIEW');
+	}
+	function holdCard() {
+		game.send('HOLD_CARD', { card, index });
 		cardView.send('CLOSE_CARD_VIEW');
 	}
 </script>
@@ -91,13 +98,15 @@
 							<button
 								type="button"
 								class="inline-flex items-center px-6 py-3 border border-transparent text-lg font-semibold rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-0 disabled:cursor-default"
+								on:click={holdCard}
+								disabled={disableHold}
 							>
 								<i>pan_tool</i>&nbsp&nbsp<span>HOLD</span>
 							</button>
 							<button
 								type="button"
 								class="inline-flex items-center px-6 py-3 border border-transparent text-lg font-semibold rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-0 disabled:cursor-default"
-								on:click={handleBuy}
+								on:click={buyCard}
 								disabled={disableBuy}
 							>
 								<i>attach_money</i>&nbsp<span>BUY</span>

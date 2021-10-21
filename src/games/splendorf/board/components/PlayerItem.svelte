@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { colors } from '../../game';
+	import { Clr, colors } from '../../game';
 	import TokenCard from './TokenCard.svelte';
 
 	export let player;
@@ -10,8 +10,8 @@
 		.map((n) => n[0])
 		.join('');
 
-	function handleClick(cards) {
-		cardCollection.send('OPEN_CARD_COLLECTION', { cards });
+	function handleClick(cards, mode) {
+		cardCollection.send('OPEN_CARD_COLLECTION', { cards, mode });
 	}
 </script>
 
@@ -23,12 +23,28 @@
 		<span class="hidden sm:inline-block">{player.name}</span>
 	</div>
 	{#each colors as color}
-		<button class="w-full sm:w-1/6 h-full" on:click={() => handleClick(player.cards[color])}>
-			<TokenCard
-				cardCount={player.cards[color]?.length || 0}
-				tokenCount={player.tokens[color]}
-				{color}
-			/>
-		</button>
+		{#if color === Clr.go}
+			<button
+				class="w-full sm:w-1/6 h-full"
+				on:click={() => handleClick(player.cards.holds, 'holds')}
+			>
+				<TokenCard
+					cardCount={player.cards.holds?.length || 0}
+					tokenCount={player.tokens[color]}
+					{color}
+				/>
+			</button>
+		{:else}
+			<button
+				class="w-full sm:w-1/6 h-full"
+				on:click={() => handleClick(player.cards[color], 'player')}
+			>
+				<TokenCard
+					cardCount={player.cards[color]?.length || 0}
+					tokenCount={player.tokens[color]}
+					{color}
+				/>
+			</button>
+		{/if}
 	{/each}
 </div>

@@ -2,12 +2,14 @@ import type { StateMachine } from 'xstate';
 import { createMachine, assign } from 'xstate';
 import type { Card } from './types';
 
+type Mode = 'player' | 'holds';
 export interface CardCollectionCtx {
 	cards: Card[];
+	mode: Mode;
 }
 
 export type CardCollectionEvt =
-	| { type: 'OPEN_CARD_COLLECTION'; cards?: Card[] }
+	| { type: 'OPEN_CARD_COLLECTION'; cards?: Card[]; mode?: Mode }
 	| { type: 'PREV_COLLECTION' }
 	| { type: 'NEXT_COLLECTION' }
 	| { type: 'CLOSE_CARD_COLLECTION' };
@@ -18,7 +20,8 @@ export const cardCollectionMachine: StateMachine<CardCollectionCtx, any, CardCol
 			id: 'cardCollection',
 			initial: 'closed',
 			context: {
-				cards: []
+				cards: [],
+				mode: 'player'
 			},
 			states: {
 				closed: {
@@ -26,7 +29,8 @@ export const cardCollectionMachine: StateMachine<CardCollectionCtx, any, CardCol
 						OPEN_CARD_COLLECTION: {
 							actions: [
 								assign({
-									cards: (ctx, evt) => evt.cards || ctx.cards
+									cards: (ctx, evt) => evt.cards || ctx.cards,
+									mode: (ctx, evt) => evt.mode || ctx.mode
 								})
 							],
 							target: 'opened'

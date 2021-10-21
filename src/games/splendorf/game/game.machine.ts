@@ -77,8 +77,14 @@ export function createGameMachine(sessionPlayerId: string): StateMachine<GameCtx
 							target: 'selectingTokens'
 						},
 						BUY_CARD: {
+							cond: 'canBuyCard',
 							target: 'buyingCard',
 							actions: 'buyCard'
+						},
+						HOLD_CARD: {
+							cond: 'canHoldCard',
+							target: 'holdingCard',
+							actions: 'holdCard'
 						},
 						END_TURN: {
 							target: 'waitingToPublish',
